@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {COLORS} from '../../theme';
-import {AntDesign, Feather} from 'react-native-vector-icons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 
 const CustomTextInput = ({
   icon,

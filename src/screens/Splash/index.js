@@ -1,13 +1,17 @@
-//import liraries
-import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+// import libraries
+import React from 'react';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {COLORS} from '../../theme';
 
 // create a component
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>SplashScreen</Text>
+      <Image
+        source={require('../../assets/images/logo.png')} // Update the path to your logo
+        style={styles.logo}
+        resizeMode="contain"
+      />
     </View>
   );
 };
@@ -20,7 +24,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.background,
   },
+  logo: {
+    borderRadius: 50,
+  },
+  text: {
+    fontSize: 24,
+    color: COLORS.primary, // Change to your desired text color
+  },
 });
 
-//make this component available to the app
 export default SplashScreen;
