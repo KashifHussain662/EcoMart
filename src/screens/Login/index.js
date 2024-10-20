@@ -1,13 +1,15 @@
 //import liraries
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {COLORS} from '../../theme';
 
 // create a component
-const Home = () => {
+const Login = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text>Home</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.buttonText}>Let's Go</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -23,4 +25,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default Home;
+export default Login;

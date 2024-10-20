@@ -1,12 +1,13 @@
 //import liraries
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {COLORS} from '../../theme';
 
 // create a component
-const MyComponent = () => {
+const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>MyComponent</Text>
+      <Text>SplashScreen</Text>
     </View>
   );
 };
@@ -17,9 +18,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2c3e50',
+    backgroundColor: COLORS.background,
   },
 });
 
 //make this component available to the app
-export default MyComponent;
+export default SplashScreen;
