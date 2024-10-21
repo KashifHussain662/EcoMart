@@ -6,18 +6,64 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import {COLORS} from '../../theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {CustomButton} from '../../component';
+import showToast from '../../Utility';
 
 const Login = ({navigation}) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  // Hardcoded values
+  const hardcodedEmail = 'zohaib@gmail.com';
+  const hardcodedPassword = 'zohaib';
+
+  const [username, setUsername] = useState(hardcodedEmail);
+  const [password, setPassword] = useState(hardcodedPassword);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const validateEmail = email => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleLogin = () => {
-    // Implement your login logic here
+    if (!username || !password) {
+      showToast({
+        message: 'Please enter both email and password',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (!validateEmail(username)) {
+      showToast({
+        message: 'Please enter a valid email address.',
+        type: 'error',
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    setTimeout(() => {
+      if (username === hardcodedEmail && password === hardcodedPassword) {
+        setLoading(false);
+        showToast({
+          message: 'Login successful! Welcome back.',
+          type: 'success',
+        });
+        navigation.navigate('Home');
+      } else {
+        setLoading(false);
+        showToast({
+          message: 'Invalid email or password.',
+          type: 'error',
+        });
+      }
+    }, 2000);
   };
 
   return (
@@ -80,36 +126,33 @@ const Login = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      {/* Uncomment for loading modal if needed */}
-      {/* <Modal
+      <Modal
         transparent={true}
         animationType="none"
         visible={loading}
-        onRequestClose={() => {}}>
+        onRequestClose={() => setLoading(false)}>
         <View style={styles.modalBackground}>
           <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator size="large" color={COLORS.primary} />
+            <ActivityIndicator size="large" color={COLORS.dark} />
             <Text style={styles.loadingText}>Logging in...</Text>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
     </View>
   );
 };
 
-// Define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.background,
     paddingHorizontal: 20,
   },
   logo: {
     height: 120,
     resizeMode: 'contain',
-    marginBottom: 40,
   },
   formContainer: {
     width: '100%',
@@ -155,7 +198,24 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: 'bold',
   },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: 'white',
+    width: '90%',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: COLORS.dark,
+  },
 });
 
-// Make this component available to the app
 export default Login;

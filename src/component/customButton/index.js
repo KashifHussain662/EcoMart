@@ -20,7 +20,7 @@ const CustomButton = ({label, onPress, style, textStyle, width, height}) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLORS.secondary, // Change this to your desired color
+    backgroundColor: COLORS.dark, // Change this to your desired color
     paddingVertical: 12, // Increased vertical padding for a better look
     paddingHorizontal: 20, // Increased horizontal padding
     borderRadius: 8, // Slightly larger border radius for softer edges
