@@ -15,13 +15,16 @@ const BottomTabs = () => {
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
-          } else '';
+          } else {
+            iconName = 'home'; // Default icon (change if needed)
+          }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.secondary,
       })}>
       <Tab.Screen name="Home" component={Home} options={{headerShown: false}} />
+      {/* Add more Tab.Screens as needed */}
     </Tab.Navigator>
   );
 };

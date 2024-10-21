@@ -2,6 +2,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Home, Login, SplashScreen, Welcome} from '../screens';
+import BottomTabs from './BottomTabs';
 
 const Stack = createStackNavigator();
 
@@ -43,7 +44,7 @@ const Auth = () => {
       {showWelcomeScreen && <Stack.Screen name="Welcome" component={Welcome} />}
       {showGetStartedScreen && <Stack.Screen name="Login" component={Login} />}
 
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Tabs" component={BottomTabs} />
     </Stack.Navigator>
   );
 };

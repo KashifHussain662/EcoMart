@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
           message: 'Login successful! Welcome back.',
           type: 'success',
         });
-        navigation.navigate('Home');
+        navigation.navigate('Tabs');
       } else {
         setLoading(false);
         showToast({
