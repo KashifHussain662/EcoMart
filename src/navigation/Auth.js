@@ -9,7 +9,6 @@ const Stack = createStackNavigator();
 const Auth = () => {
   const [showSplashScreen, setShowSplashScreen] = useState(true);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
-  const [showGetStartedScreen, setShowGetStartedScreen] = useState(false);
 
   useEffect(() => {
     checkAppStatus();
@@ -22,7 +21,8 @@ const Auth = () => {
         setShowWelcomeScreen(true);
         await AsyncStorage.setItem('appStatus', 'opened');
       } else {
-        setShowGetStartedScreen(true);
+        // Directly navigate to Login if appStatus exists
+        setShowWelcomeScreen(false); // Hide welcome screen if it was shown
       }
     } catch (error) {
       console.log('Error retrieving app status:', error);
@@ -37,13 +37,12 @@ const Auth = () => {
     <Stack.Navigator
       initialRouteName="SplashScreen"
       screenOptions={{headerShown: false}}>
-      {/* //onboarding Screen */}
+      {/* Onboarding Screens */}
       {showSplashScreen && (
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
       )}
       {showWelcomeScreen && <Stack.Screen name="Welcome" component={Welcome} />}
-      {showGetStartedScreen && <Stack.Screen name="Login" component={Login} />}
-
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Tabs" component={BottomTabs} />
     </Stack.Navigator>
   );
