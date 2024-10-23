@@ -17,22 +17,22 @@ const categories = [
     id: 1,
     name: 'Chanwal',
     subcategories: [
-      {name: 'Basmati', type: 'weight', pricePerUnit: 0.15},
-      {name: 'Sella', type: 'weight', pricePerUnit: 0.1},
-      {name: 'Brown Rice', type: 'weight', pricePerUnit: 0.12},
-      {name: 'White Rice', type: 'weight', pricePerUnit: 0.11},
-      {name: 'Parboiled', type: 'weight', pricePerUnit: 0.13},
+      {name: 'Basmati', type: 'weight'},
+      {name: 'Sella', type: 'weight'},
+      {name: 'Brown Rice', type: 'weight'},
+      {name: 'White Rice', type: 'weight'},
+      {name: 'Parboiled', type: 'weight'},
     ],
   },
   {
     id: 2,
     name: 'Daal',
     subcategories: [
-      {name: 'Masoor', type: 'weight', pricePerUnit: 0.09},
-      {name: 'Moong', type: 'weight', pricePerUnit: 0.08},
-      {name: 'Toor', type: 'weight', pricePerUnit: 0.1},
-      {name: 'Chana', type: 'weight', pricePerUnit: 0.07},
-      {name: 'Urad', type: 'weight', pricePerUnit: 0.11},
+      {name: 'Masoor', type: 'weight'},
+      {name: 'Moong', type: 'weight'},
+      {name: 'Toor', type: 'weight'},
+      {name: 'Chana', type: 'weight'},
+      {name: 'Urad', type: 'weight'},
     ],
   },
 ];
@@ -65,22 +65,16 @@ const Home = () => {
     }));
   };
 
-  const handleDone = (pricePerUnit, type) => {
+  const handleDone = type => {
     const qty = quantity[selectedSubcategory] || 0;
     const selectedUnit = unit[selectedSubcategory] || 'grams';
 
     const finalQty = selectedUnit === 'kilograms' ? qty * 1000 : qty;
 
-    const computedPrice =
-      type === 'weight'
-        ? finalQty * pricePerUnit
-        : parseInt(qty) * pricePerUnit;
-
     if (qty > 0) {
       const newReceiptItem = {
         subcategory: selectedSubcategory,
         quantity: finalQty,
-        price: computedPrice,
         unit: selectedUnit,
       };
 
@@ -95,12 +89,6 @@ const Home = () => {
     } else {
       Alert.alert('Invalid Input', 'Please enter a valid quantity.');
     }
-  };
-
-  const getTotalPrice = () => {
-    return receiptData
-      .reduce((total, item) => total + item.price, 0)
-      .toFixed(2);
   };
 
   return (
@@ -124,7 +112,6 @@ const Home = () => {
 
         {selectedCategory && (
           <View>
-            <Text style={styles.title}>Select Subcategory</Text>
             <Picker
               selectedValue={selectedSubcategory}
               style={styles.subcategoryPicker}
@@ -177,9 +164,6 @@ const Home = () => {
                     handleDone(
                       selectedCategory.subcategories.find(
                         sub => sub.name === selectedSubcategory,
-                      ).pricePerUnit,
-                      selectedCategory.subcategories.find(
-                        sub => sub.name === selectedSubcategory,
                       ).type,
                     )
                   }>
@@ -190,15 +174,12 @@ const Home = () => {
           </View>
         )}
 
-        {showReceipt && (
-          <Receipt cart={receiptData} totalPrice={getTotalPrice()} />
-        )}
+        {showReceipt && <Receipt cart={receiptData} />}
       </ScrollView>
     </View>
   );
 };
 
-// Styles for Home component
 const styles = StyleSheet.create({
   container: {
     flex: 1,

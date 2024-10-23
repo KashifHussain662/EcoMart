@@ -2,7 +2,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-const Receipt = ({cart, totalPrice}) => {
+const Receipt = ({cart}) => {
   return (
     <View style={styles.receiptContainer}>
       <Text style={styles.shopName}>Kashif Kiryana Shop</Text>
@@ -20,7 +20,6 @@ const Receipt = ({cart, totalPrice}) => {
           </Text>
         </View>
       ))}
-      <Text style={styles.totalText}>Total: Rs. {totalPrice}</Text>
     </View>
   );
 };
