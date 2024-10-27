@@ -1,181 +1,119 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, TextInput, FlatList, Image} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {COLORS} from '../../theme';
-import {Picker} from '@react-native-picker/picker';
-import {Receipt} from '../../component';
-
-const categories = [
-  {
-    id: 1,
-    name: 'Chanwal',
-    subcategories: [
-      {name: 'Basmati', type: 'weight'},
-      {name: 'Sella', type: 'weight'},
-      {name: 'Brown Rice', type: 'weight'},
-      {name: 'White Rice', type: 'weight'},
-      {name: 'Parboiled', type: 'weight'},
-    ],
-  },
-  {
-    id: 2,
-    name: 'Daal',
-    subcategories: [
-      {name: 'Masoor', type: 'weight'},
-      {name: 'Moong', type: 'weight'},
-      {name: 'Toor', type: 'weight'},
-      {name: 'Chana', type: 'weight'},
-      {name: 'Urad', type: 'weight'},
-    ],
-  },
-];
 
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const [quantity, setQuantity] = useState({});
-  const [unit, setUnit] = useState({});
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [receiptData, setReceiptData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleCategorySelect = categoryId => {
-    const category = categories.find(cat => cat.id === categoryId);
-    setSelectedCategory(category);
-    setSelectedSubcategory(null);
-  };
+  const data = [
+    {id: '1', title: 'Rice', price: 1.5, inStock: true, category: 'Grains'},
+    {
+      id: '2',
+      title: 'Wheat Flour',
+      price: 1.2,
+      inStock: true,
+      category: 'Grains',
+    },
+    {id: '3', title: 'Sugar', price: 0.8, inStock: true, category: 'Staples'},
+    {id: '4', title: 'Salt', price: 0.3, inStock: true, category: 'Staples'},
+    {
+      id: '5',
+      title: 'Pulses (Lentils)',
+      price: 2.0,
+      inStock: true,
+      category: 'Pulses',
+    },
+    {
+      id: '6',
+      title: 'Cooking Oil',
+      price: 3.5,
+      inStock: true,
+      category: 'Condiments',
+    },
+    {
+      id: '7',
+      title: 'Tea Leaves',
+      price: 4.0,
+      inStock: false,
+      category: 'Beverages',
+    },
+    {
+      id: '8',
+      title: 'Coffee Powder',
+      price: 5.0,
+      inStock: true,
+      category: 'Beverages',
+    },
+    {
+      id: '9',
+      title: 'Spices (Masala)',
+      price: 2.5,
+      inStock: true,
+      category: 'Spices',
+    },
+    {id: '10', title: 'Soap', price: 1.0, inStock: true, category: 'Household'},
+    {
+      id: '11',
+      title: 'Detergent Powder',
+      price: 2.5,
+      inStock: true,
+      category: 'Household',
+    },
+    {
+      id: '12',
+      title: 'Biscuits',
+      price: 1.8,
+      inStock: true,
+      category: 'Snacks',
+    },
+  ];
 
-  const handleQuantityChange = qty => {
-    setQuantity(prevQuantities => ({
-      ...prevQuantities,
-      [selectedSubcategory]: qty,
-    }));
-  };
-
-  const handleUnitChange = unit => {
-    setUnit(prevUnits => ({
-      ...prevUnits,
-      [selectedSubcategory]: unit,
-    }));
-  };
-
-  const handleDone = type => {
-    const qty = quantity[selectedSubcategory] || 0;
-    const selectedUnit = unit[selectedSubcategory] || 'grams';
-
-    const finalQty = selectedUnit === 'kilograms' ? qty * 1000 : qty;
-
-    if (qty > 0) {
-      const newReceiptItem = {
-        subcategory: selectedSubcategory,
-        quantity: finalQty,
-        unit: selectedUnit,
-      };
-
-      setReceiptData(prevData => [...prevData, newReceiptItem]);
-      setShowReceipt(true);
-
-      setQuantity(prevQuantities => ({
-        ...prevQuantities,
-        [selectedSubcategory]: '',
-      }));
-      setSelectedSubcategory(null);
-    } else {
-      Alert.alert('Invalid Input', 'Please enter a valid quantity.');
-    }
-  };
+  const filteredData = data.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.ismenHeader}>Home</Text>
+        <View style={styles.searchBar}>
+          <Icon name="search" color="#888" size={20} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for grocery..."
+            placeholderTextColor="#888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+        <View style={styles.headerIcons}>
+          <Icon name="shopping-cart" color="#fff" size={36} />
+        </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>Categories</Text>
-        <View style={styles.categoryList}>
-          {categories.map(category => (
-            <TouchableOpacity
-              key={category.id}
-              style={styles.categoryButton}
-              onPress={() => handleCategorySelect(category.id)}>
-              <Text style={styles.categoryText}>{category.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {selectedCategory && (
-          <View>
-            <Picker
-              selectedValue={selectedSubcategory}
-              style={styles.subcategoryPicker}
-              onValueChange={value => setSelectedSubcategory(value)}>
-              <Picker.Item label="Select a subcategory" value={null} />
-              {selectedCategory.subcategories.map((subcategory, index) => (
-                <Picker.Item
-                  key={index}
-                  label={subcategory.name}
-                  value={subcategory.name}
-                />
-              ))}
-            </Picker>
-
-            {selectedSubcategory && (
-              <View style={styles.subcategoryItem}>
-                <Text style={styles.subcategoryText}>
-                  {selectedSubcategory}
-                </Text>
-
-                <TextInput
-                  style={styles.quantityInput}
-                  placeholder={`Enter ${
-                    selectedCategory.subcategories.find(
-                      sub => sub.name === selectedSubcategory,
-                    ).type === 'weight'
-                      ? 'grams or kilograms'
-                      : 'quantity'
-                  }`}
-                  keyboardType="numeric"
-                  value={quantity[selectedSubcategory] || ''}
-                  onChangeText={handleQuantityChange}
-                />
-
-                {selectedCategory.subcategories.find(
-                  sub => sub.name === selectedSubcategory,
-                ).type === 'weight' && (
-                  <Picker
-                    selectedValue={unit[selectedSubcategory] || 'grams'}
-                    style={styles.unitPicker}
-                    onValueChange={handleUnitChange}>
-                    <Picker.Item label="Grams" value="grams" />
-                    <Picker.Item label="Kilograms" value="kilograms" />
-                  </Picker>
-                )}
-
-                <TouchableOpacity
-                  style={styles.doneButton}
-                  onPress={() =>
-                    handleDone(
-                      selectedCategory.subcategories.find(
-                        sub => sub.name === selectedSubcategory,
-                      ).type,
-                    )
-                  }>
-                  <Text style={styles.doneButtonText}>Done</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+      <FlatList
+        data={filteredData}
+        keyExtractor={item => item.id}
+        style={styles.cardList}
+        contentContainerStyle={styles.contentContainer}
+        numColumns={2}
+        renderItem={({item}) => (
+          <View style={styles.card}>
+            <Image
+              source={{uri: 'https://via.placeholder.com/150'}}
+              style={styles.cardImage}
+              accessibilityLabel={item.title}
+            />
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardPrice}>${item.price.toFixed(2)}</Text>
+              {!item.inStock && (
+                <Text style={styles.outOfStock}>Out of Stock</Text>
+              )}
+            </View>
           </View>
         )}
-
-        {showReceipt && <Receipt cart={receiptData} />}
-      </ScrollView>
+      />
     </View>
   );
 };
@@ -183,69 +121,77 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.lightGray,
   },
   header: {
-    padding: 16,
-    backgroundColor: COLORS.primary,
-  },
-  ismenHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  scrollView: {
-    padding: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  categoryList: {
+    height: 170,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 15,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
-  categoryButton: {
-    backgroundColor: COLORS.secondary,
+  searchBar: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    marginHorizontal: 10,
+    paddingHorizontal: 12,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    color: '#333',
     padding: 10,
-    borderRadius: 5,
+  },
+  headerIcons: {
+    width: 40,
+    alignItems: 'center',
+  },
+  cardList: {
+    padding: 10,
+    marginTop: 10,
+  },
+  contentContainer: {
+    paddingTop: 10,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
     margin: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    height: 180,
+    flex: 1,
+    justifyContent: 'space-between',
   },
-  categoryText: {
-    color: 'white',
-  },
-  subcategoryPicker: {
-    height: 50,
+  cardImage: {
     width: '100%',
-    marginVertical: 10,
+    height: 100,
+    borderRadius: 10,
   },
-  subcategoryItem: {
-    marginBottom: 10,
+  cardContent: {
+    padding: 10,
   },
-  subcategoryText: {
+  cardTitle: {
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  quantityInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
+  cardPrice: {
+    fontSize: 14,
+    color: '#555',
   },
-  unitPicker: {
-    marginVertical: 5,
-  },
-  doneButton: {
-    backgroundColor: COLORS.secondary,
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-  },
-  doneButtonText: {
-    color: 'white',
-    textAlign: 'center',
+  outOfStock: {
+    fontSize: 12,
+    color: 'red',
+    marginTop: 5,
   },
 });
 

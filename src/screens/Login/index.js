@@ -87,12 +87,7 @@ const Login = ({navigation}) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Icon
-            name="lock"
-            size={20}
-            color={COLORS.primary}
-            style={styles.icon}
-          />
+          <Icon name="lock" size={20} color={COLORS.dark} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Password"
