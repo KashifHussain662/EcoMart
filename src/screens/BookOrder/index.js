@@ -88,8 +88,8 @@ const BookOrder = () => {
           finalQty = (quantityInGrams / 1000).toFixed(1);
           displayUnit = 'kg';
         } else {
-          finalQty = quantityInGrams;
-          displayUnit = 'g';
+          finalQty = (quantityInGrams / 1000).toFixed(1); // Display 0.5 instead of 0.500
+          displayUnit = 'kg';
         }
 
         const newReceiptItem = {
