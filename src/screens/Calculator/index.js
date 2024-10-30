@@ -6,20 +6,42 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
+import {create, all} from 'mathjs';
+
+const math = create(all, {});
 
 const Calculator = () => {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
 
+  const operators = ['+', '-', '*', '/'];
+
   const handleInput = value => {
-    setInput(input + value);
+    const lastChar = input[input.length - 1];
+
+    // Agar result dikh raha hai, to input ko naya operator set karte hain
+    if (result) {
+      if (operators.includes(value)) {
+        setInput(result + value); // result ko use karte hain
+        setResult('');
+      } else {
+        setInput(value);
+        setResult('');
+      }
+    } else if (operators.includes(value) && operators.includes(lastChar)) {
+      setInput(input.slice(0, -1) + value);
+    } else {
+      setInput(input + value);
+    }
   };
 
   const calculateResult = () => {
     try {
-      setResult(eval(input)); // Evaluate the input expression
+      const evaluatedResult = math.evaluate(input);
+      setResult(evaluatedResult.toString());
     } catch (error) {
-      setResult('Error'); // Handle error in case of invalid expression
+      console.error(error);
+      setResult('Error');
     }
   };
 
@@ -28,16 +50,22 @@ const Calculator = () => {
     setResult('');
   };
 
+  const backspace = () => {
+    setInput(input.slice(0, -1));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Calculator</Text>
+      </View>
       <View style={styles.resultContainer}>
         <Text style={styles.resultText}>{result || input || '0'}</Text>
       </View>
       <View style={styles.buttonsContainer}>
         <View style={styles.row}>
           <Button title="C" onPress={clearInput} />
-          <Button title="(" onPress={() => handleInput('(')} />
-          <Button title=")" onPress={() => handleInput(')')} />
+          <Button title="←" onPress={backspace} />
           <Button title="/" onPress={() => handleInput('/')} />
         </View>
         <View style={styles.row}>
@@ -83,6 +111,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
+  },
+  header: {
+    padding: 20,
+    backgroundColor: '#3498db',
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 24,
+    color: '#fff',
   },
   resultContainer: {
     flex: 2,

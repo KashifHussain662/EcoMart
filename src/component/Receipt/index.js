@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
+import {COLORS} from '../../theme';
 
 const generateReceiptNumber = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -58,8 +59,7 @@ const Receipt = ({cart}) => {
         ref={viewShotRef}
         options={{format: 'png', quality: 0.9}}
         style={styles.container}>
-        <Text style={styles.shopName}>Kashif Kiryana Shop</Text>
-        <Text style={styles.receiptHeader}>Payment Receipt</Text>
+        <Text style={styles.receiptHeader}>Order Receipt</Text>
         <View style={styles.header}>
           <View>
             <Text style={styles.receiptInfo}>Receipt No: {receiptNumber}</Text>
@@ -143,8 +143,11 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    // marginBottom: 10,
     padding: 12,
+    borderWidth: 0.2,
+    borderTopRightRadius: 6,
+    borderTopLeftRadius: 6,
   },
   receiptInfo: {
     fontSize: 14,
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
   receiptContainer: {
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    borderRadius: 8,
+    // borderRadius: 8,
     backgroundColor: '#fdfdfd',
     marginBottom: 10,
     overflow: 'hidden',
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#2980b9',
+    backgroundColor: 'black',
     paddingVertical: 10,
   },
   headerText: {
@@ -207,7 +210,7 @@ const styles = StyleSheet.create({
     color: '#e74c3c',
   },
   shareButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: 'black',
     padding: 12,
     borderRadius: 5,
     alignItems: 'center',

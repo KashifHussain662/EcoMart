@@ -49,11 +49,11 @@ const BottomTabs = () => {
         component={Calculator}
         options={{headerShown: false}}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Khata"
         component={CustomerScreen}
         options={{headerShown: false}}
-      />
+      /> */}
       <Tab.Screen
         name="Profile"
         component={Profile}

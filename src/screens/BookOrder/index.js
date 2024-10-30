@@ -11,26 +11,14 @@ import {
 import {COLORS} from '../../theme';
 import {Picker} from '@react-native-picker/picker';
 import {Receipt} from '../../component';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const categories = [
   {id: 1, name: 'Chanwal', subcategories: [{name: 'Basmati', type: 'weight'}]},
-  {id: 2, name: 'Daal', subcategories: [{name: 'Masoor', type: 'weight'}]},
   {
-    id: 3,
-    name: 'Vegetables',
-    subcategories: [{name: 'Tomato', type: 'weight'}],
-  },
-  {id: 4, name: 'Fruits', subcategories: [{name: 'Apple', type: 'weight'}]},
-  {id: 5, name: 'Dairy', subcategories: [{name: 'Milk', type: 'volume'}]},
-  {id: 6, name: 'Snacks', subcategories: [{name: 'Chips', type: 'quantity'}]},
-  {id: 7, name: 'Beverages', subcategories: [{name: 'Juice', type: 'volume'}]},
-  {id: 8, name: 'Grains', subcategories: [{name: 'Oats', type: 'weight'}]},
-  {id: 9, name: 'Spices', subcategories: [{name: 'Salt', type: 'weight'}]},
-  {id: 10, name: 'Nuts', subcategories: [{name: 'Almonds', type: 'weight'}]},
-  {
-    id: 11,
-    name: 'Biscuits', // Capitalized for consistency
-    subcategories: [{name: 'Peanuts', type: 'quantity'}], // Fixed typo
+    id: 2,
+    name: 'Biscuits',
+    subcategories: [{name: 'Peanuts', type: 'quantity'}],
   },
 ];
 
@@ -84,13 +72,8 @@ const BookOrder = () => {
         selectedUnit === 'kg' ? qtyInGrams * 1000 : qtyInGrams;
 
       if (quantityInGrams > 0) {
-        if (quantityInGrams >= 1000) {
-          finalQty = (quantityInGrams / 1000).toFixed(1);
-          displayUnit = 'kg';
-        } else {
-          finalQty = (quantityInGrams / 1000).toFixed(1); // Display 0.5 instead of 0.500
-          displayUnit = 'kg';
-        }
+        finalQty = (quantityInGrams / 1000).toFixed(1);
+        displayUnit = quantityInGrams >= 1000 ? 'kg' : 'g';
 
         const newReceiptItem = {
           subcategory: selectedSubcategory,
@@ -122,6 +105,7 @@ const BookOrder = () => {
           [selectedSubcategory]: '',
         }));
         setSelectedSubcategory(null);
+        setSelectedCategory('');
       } else {
         Alert.alert('Invalid Input', 'Please enter a valid quantity.');
       }
@@ -131,7 +115,7 @@ const BookOrder = () => {
   return (
     <>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Home</Text>
+        <Text style={styles.headerText}>Order Your Items</Text>
       </View>
       <View style={styles.container}>
         <ScrollView style={styles.scrollView}>
@@ -148,6 +132,9 @@ const BookOrder = () => {
                 <Text style={styles.categoryText}>{category.name}</Text>
               </TouchableOpacity>
             ))}
+            <Text style={styles.categoryAdd}>
+              <Icon name="add" color="black" style={{fontSize: 30}} />
+            </Text>
           </ScrollView>
 
           {selectedCategory && (
@@ -226,14 +213,18 @@ const BookOrder = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.lightGray,
     padding: 16,
   },
   header: {
-    padding: 20,
+    height: 120,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: COLORS.background,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    paddingHorizontal: 15,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   headerText: {
     fontSize: 28,
@@ -255,15 +246,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   categoryButton: {
-    backgroundColor: COLORS.secondary,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    backgroundColor: COLORS.secondary, // Change to a secondary color
     borderRadius: 12,
     margin: 8,
-    elevation: 3,
+    elevation: 4, // Slightly higher elevation for depth
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    padding: 12,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -274,6 +264,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  categoryAdd: {
+    paddingHorizontal: 12,
+    paddingVertical: 14,
   },
   selectedCategoryText: {
     fontSize: 18,
@@ -298,7 +292,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 15,
     marginVertical: 5,
-    elevation: 2,
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -320,6 +314,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 5,
     backgroundColor: 'white',
+    elevation: 2,
   },
   unitPicker: {
     marginVertical: 5,
@@ -327,6 +322,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.lightGray,
     borderRadius: 10,
     backgroundColor: 'white',
+    elevation: 2,
   },
   doneButton: {
     backgroundColor: COLORS.secondary,
@@ -334,7 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 5,
     alignItems: 'center',
-    elevation: 2,
+    elevation: 3,
   },
   doneButtonText: {
     color: 'white',
