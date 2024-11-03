@@ -49,19 +49,15 @@ const Login = ({navigation}) => {
     setLoading(true);
 
     setTimeout(() => {
+      setLoading(false);
       if (username === hardcodedEmail && password === hardcodedPassword) {
-        setLoading(false);
         showToast({
           message: 'Login successful! Welcome back.',
           type: 'success',
         });
         navigation.navigate('Tabs');
       } else {
-        setLoading(false);
-        showToast({
-          message: 'Invalid email or password.',
-          type: 'error',
-        });
+        showToast({message: 'Invalid email or password.', type: 'error'});
       }
     }, 2000);
   };
@@ -83,6 +79,7 @@ const Login = ({navigation}) => {
             onChangeText={setUsername}
             value={username}
             placeholderTextColor={COLORS.grey}
+            autoCapitalize="none"
           />
         </View>
 
@@ -107,8 +104,8 @@ const Login = ({navigation}) => {
         </View>
 
         <CustomButton
-          label={'Log in'}
-          width={'90%'}
+          label="Log in"
+          width="90%"
           height={50}
           onPress={handleLogin}
         />
@@ -122,7 +119,7 @@ const Login = ({navigation}) => {
       </View>
 
       <Modal
-        transparent={true}
+        transparent
         animationType="none"
         visible={loading}
         onRequestClose={() => setLoading(false)}>
@@ -187,7 +184,7 @@ const styles = StyleSheet.create({
   },
   registerLinkText: {
     fontSize: 14,
-    color: COLORS.dark,
+    color: COLORS.light,
   },
   link: {
     color: COLORS.primary,

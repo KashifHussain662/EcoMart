@@ -1,77 +1,68 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {COLORS} from '../../theme';
+import {useNavigation} from '@react-navigation/native';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigation = useNavigation();
 
   const data = [
-    {id: '1', title: 'Rice', price: 1.5, inStock: true, category: 'Grains'},
+    {
+      id: '1',
+      title: 'Rice',
+      price: 1.5,
+      inStock: true,
+      category: 'Grains',
+      imageUrl: require('../../assets/images/chanwal.jpeg'),
+    },
     {
       id: '2',
       title: 'Wheat Flour',
       price: 1.2,
       inStock: true,
       category: 'Grains',
+      imageUrl: require('../../assets/images/wheat_flour.jpg'),
     },
-    {id: '3', title: 'Sugar', price: 0.8, inStock: true, category: 'Staples'},
-    {id: '4', title: 'Salt', price: 0.3, inStock: true, category: 'Staples'},
     {
-      id: '5',
-      title: 'Pulses (Lentils)',
-      price: 2.0,
+      id: '3',
+      title: 'Sugar',
+      price: 0.8,
       inStock: true,
-      category: 'Pulses',
+      category: 'Staples',
+      imageUrl: require('../../assets/images/sugar.jpeg'),
     },
     {
-      id: '6',
-      title: 'Cooking Oil',
-      price: 3.5,
+      id: '4',
+      title: 'Salt',
+      price: 0.3,
       inStock: true,
-      category: 'Condiments',
-    },
-    {
-      id: '7',
-      title: 'Tea Leaves',
-      price: 4.0,
-      inStock: false,
-      category: 'Beverages',
-    },
-    {
-      id: '8',
-      title: 'Coffee Powder',
-      price: 5.0,
-      inStock: true,
-      category: 'Beverages',
-    },
-    {
-      id: '9',
-      title: 'Spices (Masala)',
-      price: 2.5,
-      inStock: true,
-      category: 'Spices',
-    },
-    {id: '10', title: 'Soap', price: 1.0, inStock: true, category: 'Household'},
-    {
-      id: '11',
-      title: 'Detergent Powder',
-      price: 2.5,
-      inStock: true,
-      category: 'Household',
-    },
-    {
-      id: '12',
-      title: 'Biscuits',
-      price: 1.8,
-      inStock: true,
-      category: 'Snacks',
+      category: 'Staples',
+      imageUrl: require('../../assets/images/salt.jpeg'),
     },
   ];
 
   const filteredData = data.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const addToCart = item => {
+    Alert.alert('Added to Cart', `${item.title} has been added to your cart.`);
+  };
+
+  const handleCardPress = () => {
+    navigation.navigate('BookOrder');
+  };
 
   return (
     <View style={styles.container}>
@@ -98,9 +89,11 @@ const Home = () => {
         contentContainerStyle={styles.contentContainer}
         numColumns={2}
         renderItem={({item}) => (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => handleCardPress(item)}>
             <Image
-              source={{uri: 'https://via.placeholder.com/150'}}
+              source={item.imageUrl}
               style={styles.cardImage}
               accessibilityLabel={item.title}
             />
@@ -110,8 +103,15 @@ const Home = () => {
               {!item.inStock && (
                 <Text style={styles.outOfStock}>Out of Stock</Text>
               )}
+              {item.inStock && (
+                <TouchableOpacity
+                  style={styles.cartButton}
+                  onPress={() => addToCart(item)}>
+                  <Icon name="shopping-cart" size={20} color="#fff" />
+                </TouchableOpacity>
+              )}
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -167,14 +167,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    height: 180,
+    height: 200,
     flex: 1,
     justifyContent: 'space-between',
+    position: 'relative',
   },
   cardImage: {
     width: '100%',
-    height: 100,
+    height: 130,
     borderRadius: 10,
+    resizeMode: 'cover',
   },
   cardContent: {
     padding: 10,
@@ -192,6 +194,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'red',
     marginTop: 5,
+  },
+  cartButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: '#3b3b3b',
+    borderRadius: 20,
+    padding: 6,
   },
 });
 

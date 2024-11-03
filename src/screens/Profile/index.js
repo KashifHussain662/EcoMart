@@ -1,94 +1,159 @@
-//import libraries
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {COLORS} from '../../theme';
 
-// create a component
-const Profile = () => {
-  const user = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    bio: 'A passionate software developer who loves coding and exploring new technologies.',
-    location: 'San Francisco, CA',
-    profilePicture: 'https://randomuser.me/api/portraits/men/41.jpg', // Sample profile picture URL
+const CustomerProfile = ({navigation}) => {
+  const customer = {
+    name: 'Kashif Hussain',
+    email: 'kashif@example.com',
+    location: 'AnwaraAbad',
+    profilePicture: require('../../assets/images/profile.jpg'),
+    previousBill: 10000,
+    currentBill: 12000,
+    monthlyItems: [
+      {
+        item: 'Rice',
+        quantity: '10 kg',
+        price: 2000,
+        date: '2024-10-01',
+        buyer: 'Raj',
+      },
+      {
+        item: 'Flour',
+        quantity: '5 kg',
+        price: 100,
+        date: '2024-10-05',
+        buyer: 'Sita',
+      },
+    ],
   };
+
+  const totalBill = customer.monthlyItems.reduce(
+    (sum, item) => sum + item.price,
+    0,
+  );
+  const overallTotal = customer.previousBill + customer.currentBill + totalBill;
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Customer Profile</Text>
+      </View>
       <View style={styles.profileCard}>
         <Image
-          source={{uri: user.profilePicture}}
+          source={customer.profilePicture}
           style={styles.profilePicture}
+          accessibilityLabel={`Profile picture of ${customer.name}`}
         />
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.location}>{user.location}</Text>
-
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Email</Text>
-          <Text style={styles.info}>{user.email}</Text>
-
-          <Text style={styles.label}>Bio</Text>
-          <Text style={styles.info}>{user.bio}</Text>
+        <View style={styles.profileInfo}>
+          <Text style={styles.name}>{customer.name}</Text>
+          <Text style={styles.location}>{customer.location}</Text>
+          <Text style={styles.email}>{customer.email}</Text>
         </View>
       </View>
+
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalLabel}>Overall Total:</Text>
+        <Text style={styles.totalAmount}>{`Rs. ${overallTotal}`}</Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          navigation.navigate('MonthlyReport', {
+            monthlyItems: customer.monthlyItems,
+            previousBill: customer.previousBill,
+            currentBill: customer.currentBill,
+          })
+        }>
+        <Text style={styles.buttonText}>View Monthly Report</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
     padding: 20,
+    backgroundColor: COLORS.background,
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: COLORS.light,
+    // textAlign: 'center',
+    // marginBottom: 30,
   },
   profileCard: {
+    padding: 20,
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    padding: 20,
+    marginBottom: 20,
+    flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: {width: 0, height: 2},
-    elevation: 3, // For Android shadow
-    width: '90%',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   profilePicture: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 20,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginRight: 15,
     borderWidth: 2,
-    borderColor: '#3498db',
+    borderColor: '#dee2e6',
+  },
+  profileInfo: {
+    flex: 1,
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 5,
+    fontWeight: '600',
+    color: '#343a40',
   },
   location: {
     fontSize: 16,
-    color: '#7f8c8d',
-    marginBottom: 20,
+    color: '#868e96',
   },
-  infoSection: {
-    width: '100%',
-  },
-  label: {
+  email: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#34495e',
-    marginTop: 10,
+    color: '#868e96',
   },
-  info: {
+  totalContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#dee2e6',
+    paddingVertical: 15,
+  },
+  totalLabel: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#212529',
+  },
+  totalAmount: {
+    fontSize: 20,
+    color: '#dc3545',
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 15,
+    backgroundColor: COLORS.primary,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 16,
-    color: '#7f8c8d',
-    marginBottom: 10,
+    fontWeight: '600',
   },
 });
 
-//make this component available to the app
-export default Profile;
+export default CustomerProfile;

@@ -18,12 +18,12 @@ const generateReceiptNumber = () => {
 
 const Receipt = ({cart}) => {
   const viewShotRef = useRef(null);
-  const customerName = 'Kashif';
+  const customerName = '######';
   const receiptNumber = generateReceiptNumber();
   const date = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString();
 
-  const [prices, setPrices] = useState(cart.map(() => '')); // Initialize prices
+  const [prices, setPrices] = useState(cart.map(() => ''));
 
   const handlePriceChange = (index, value) => {
     const newPrices = [...prices];
@@ -86,7 +86,13 @@ const Receipt = ({cart}) => {
             <View key={index} style={styles.tableRow}>
               <Text style={styles.rowText}>{index + 1}</Text>
               <Text style={styles.rowText}>{item.subcategory}</Text>
-              <Text style={styles.rowText}>{item.quantity}</Text>
+              <Text style={styles.rowText}>
+                {item.unit === 'kg'
+                  ? `${item.quantity} kg`
+                  : item.unit === 'g'
+                  ? `${item.quantity} g`
+                  : `${item.quantity} pcs`}
+              </Text>
               <TextInput
                 style={styles.priceInput}
                 keyboardType="numeric"
@@ -95,13 +101,13 @@ const Receipt = ({cart}) => {
                 onChangeText={value => handlePriceChange(index, value)}
               />
               <Text style={styles.rowText}>
-                ${(parseFloat(prices[index]) * item.quantity || 0).toFixed(2)}
+                {(parseFloat(prices[index]) * item.quantity || 0).toFixed(2)}
               </Text>
             </View>
           ))}
           <View style={styles.totalRow}>
             <Text style={styles.totalText}>Total:</Text>
-            <Text style={styles.totalText}>${totalAmount}</Text>
+            <Text style={styles.totalText}>{totalAmount}</Text>
           </View>
         </ScrollView>
       </ViewShot>
@@ -139,6 +145,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 10,
     textAlign: 'center',
+    color: COLORS.dark,
   },
   header: {
     flexDirection: 'row',
@@ -164,7 +171,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'black',
+    backgroundColor: '#3b3b3b',
     paddingVertical: 10,
   },
   headerText: {
@@ -197,6 +204,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 5,
     // marginHorizontal: 5,
+    color: COLORS.dark,
   },
   totalRow: {
     flexDirection: 'row',

@@ -7,6 +7,7 @@ import Profile from './Profile';
 import CustomerScreen from './Khata';
 import Home from './Home';
 import DetailScreen from './DetailScreen';
+import MonthlyReport from './MonthlyReport';
 
 export {
   BookOrder,
@@ -18,4 +19,5 @@ export {
   CustomerScreen,
   Home,
   DetailScreen,
+  MonthlyReport,
 };

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {create, all} from 'mathjs';
+import {COLORS} from '../../theme';
 
 const math = create(all, {});
 
@@ -19,10 +20,9 @@ const Calculator = () => {
   const handleInput = value => {
     const lastChar = input[input.length - 1];
 
-    // Agar result dikh raha hai, to input ko naya operator set karte hain
     if (result) {
       if (operators.includes(value)) {
-        setInput(result + value); // result ko use karte hain
+        setInput(result + value);
         setResult('');
       } else {
         setInput(value);
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    backgroundColor: '#3498db',
+    backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   headerText: {
@@ -155,7 +155,8 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   equalsButton: {
-    backgroundColor: '#f39c12',
+    backgroundColor: COLORS.background,
+    color: 'white',
   },
 });
 

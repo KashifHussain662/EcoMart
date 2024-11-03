@@ -12,5 +12,5 @@ export const COLORS = {
   red: 'red',
   royalBlue: '#234E70',
   skyBlue: '#CCE7FF',
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: '#3b3b3b',
 };

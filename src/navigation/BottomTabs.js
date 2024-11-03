@@ -35,8 +35,8 @@ const BottomTabs = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.secondary,
+        tabBarActiveTintColor: COLORS.background,
+        tabBarInactiveTintColor: COLORS.dark,
       })}>
       <Tab.Screen name="Home" component={Home} options={{headerShown: false}} />
       <Tab.Screen
