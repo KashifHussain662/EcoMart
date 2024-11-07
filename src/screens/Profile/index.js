@@ -15,14 +15,14 @@ const CustomerProfile = ({navigation}) => {
         item: 'Rice',
         quantity: '10 kg',
         price: 2000,
-        date: '2024-10-01',
+        date: '10-01-24',
         buyer: 'Raj',
       },
       {
         item: 'Flour',
         quantity: '5 kg',
         price: 100,
-        date: '2024-10-05',
+        date: '10-05-24',
         buyer: 'Sita',
       },
     ],
@@ -57,6 +57,7 @@ const CustomerProfile = ({navigation}) => {
         <Text style={styles.totalAmount}>{`Rs. ${overallTotal}`}</Text>
       </View>
 
+      {/* Monthly Report Button */}
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    marginBottom: 20,
+    // marginBottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
@@ -125,29 +126,34 @@ const styles = StyleSheet.create({
     color: '#868e96',
   },
   totalContainer: {
-    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#dee2e6',
     paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    marginBottom: 20,
+    padding: 16,
   },
   totalLabel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#212529',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#495057',
   },
   totalAmount: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: '700',
     color: '#dc3545',
   },
   button: {
-    marginTop: 20,
+    backgroundColor: COLORS.background,
     paddingVertical: 15,
-    backgroundColor: COLORS.primary,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    margin: 16,
   },
   buttonText: {
     color: '#fff',

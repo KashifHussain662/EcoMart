@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Image,
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
@@ -59,7 +60,12 @@ const Receipt = ({cart}) => {
         ref={viewShotRef}
         options={{format: 'png', quality: 0.9}}
         style={styles.container}>
-        <Text style={styles.receiptHeader}>Order Receipt</Text>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+        </View>
         <View style={styles.header}>
           <View>
             <Text style={styles.receiptInfo}>Receipt No: {receiptNumber}</Text>
@@ -110,6 +116,12 @@ const Receipt = ({cart}) => {
             <Text style={styles.totalText}>{totalAmount}</Text>
           </View>
         </ScrollView>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Shop Location: Mohallah Anwarabad Ghotki
+          </Text>
+        </View>
       </ViewShot>
 
       <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
@@ -125,109 +137,120 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     borderRadius: 10,
     backgroundColor: '#ffffff',
-    // padding: 20,
-    // margin: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    // paddingBottom: 20,
   },
-  shopName: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    textAlign: 'center',
-    textDecorationLine: 'underline',
+  logoContainer: {
+    backgroundColor: '#000',
+    alignItems: 'center',
   },
-  receiptHeader: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
-    color: COLORS.dark,
+  logo: {
+    width: '40%',
+    height: 70,
+    resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginBottom: 10,
-    padding: 12,
-    borderWidth: 0.2,
-    borderTopRightRadius: 6,
-    borderTopLeftRadius: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#f1f1f1',
   },
   receiptInfo: {
     fontSize: 14,
-    color: '#7f8c8d',
+    color: '#2c3e50',
+    fontWeight: '500',
   },
   receiptContainer: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    // borderRadius: 8,
-    backgroundColor: '#fdfdfd',
-    marginBottom: 10,
-    overflow: 'hidden',
+    // marginHorizontal: 15,
+    // marginTop: 10,
   },
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#3b3b3b',
-    paddingVertical: 10,
+    backgroundColor: COLORS.background,
+    paddingVertical: 12,
+    marginBottom: 5,
   },
   headerText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#ffffff',
     flex: 1,
     textAlign: 'center',
-    color: '#ffffff',
   },
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    alignItems: 'center',
+    borderBottomColor: '#f1f1f1',
   },
   rowText: {
     flex: 1,
     textAlign: 'center',
     fontSize: 14,
-    color: '#34495e',
+    color: '#2c3e50',
   },
   priceInput: {
-    // flex: 1,
+    width: '20%',
+    fontSize: 12,
     textAlign: 'center',
-    fontSize: 10,
-    borderWidth: 0.2,
+    borderWidth: 1,
     borderColor: '#bdc3c7',
     borderRadius: 5,
-    padding: 5,
-    // marginHorizontal: 5,
-    color: COLORS.dark,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    color: '#34495e',
   },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: '#e9ecef',
+    backgroundColor: '#f7f7f7',
+    padding: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f1f1',
   },
   totalText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#e74c3c',
   },
   shareButton: {
-    backgroundColor: 'black',
-    padding: 12,
-    borderRadius: 5,
+    backgroundColor: COLORS.background,
+    paddingVertical: 14,
+    marginHorizontal: 30,
+    marginTop: 20,
+    borderRadius: 25,
     alignItems: 'center',
-    marginTop: 15,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
   },
   shareText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  footer: {
+    marginTop: 20,
+    paddingVertical: 10,
+    backgroundColor: '#f7f7f7',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  footerText: {
+    fontSize: 14,
+    color: 'black',
+    textAlign: 'center',
   },
 });
 

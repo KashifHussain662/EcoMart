@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   equalsButton: {
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.primary,
     color: 'white',
   },
 });

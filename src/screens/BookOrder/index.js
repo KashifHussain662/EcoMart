@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   doneButton: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.dark,
     padding: 12,
     borderRadius: 10,
     marginVertical: 5,
