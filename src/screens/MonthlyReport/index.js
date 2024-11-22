@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
 import {COLORS} from '../../theme';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
+import Logo from '../../assets/images/logo.png';
 
 const MonthlyReport = ({route}) => {
   const {monthlyItems, previousBill, currentBill, shopName, customerName} =
@@ -22,7 +23,7 @@ const MonthlyReport = ({route}) => {
         <div style="width: 80%; margin: 20px auto; background-color: #fff; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
           <!-- Header Section -->
           <div style="background-color: #000; text-align: center; color: #fff; border-radius: 8px; margin-bottom: 20px;">
-            <img src="https://yourdomain.com/path/to/store-logo.png" alt="Store Logo" style="max-height: 180px" />
+        <img src="data:image/png;base64,${Logo}" alt="Store Logo" style="max-height: 180px;" />
           </div>
 
           <!-- Info Section (Customer and Date) -->

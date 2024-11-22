@@ -24,18 +24,11 @@ const Receipt = ({cart}) => {
   const date = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString();
 
-  const [prices, setPrices] = useState(cart.map(() => ''));
-
-  const handlePriceChange = (index, value) => {
-    const newPrices = [...prices];
-    newPrices[index] = value;
-    setPrices(newPrices);
-  };
-
-  const totalAmount = prices
-    .reduce((total, price, index) => {
-      const quantity = cart[index].quantity || 0;
-      return total + (parseFloat(price) || 0) * quantity;
+  // Use the actual prices from the cart to calculate total
+  const totalAmount = cart
+    .reduce((total, item) => {
+      const quantity = item.quantity || 0;
+      return total + (parseFloat(item.price) || 0) * quantity;
     }, 0)
     .toFixed(2);
 
@@ -84,8 +77,10 @@ const Receipt = ({cart}) => {
             <Text style={styles.headerText}>S No</Text>
             <Text style={styles.headerText}>Item</Text>
             <Text style={styles.headerText}>Qty</Text>
-            <Text style={styles.headerText}>Price/Kg</Text>
-            <Text style={styles.headerText}>Total</Text>
+            <Text style={[styles.headerText, styles.priceColumn]}>
+              Price/Kg
+            </Text>
+            <Text style={[styles.headerText, styles.totalColumn]}>Total</Text>
           </View>
 
           {cart.map((item, index) => (
@@ -99,18 +94,16 @@ const Receipt = ({cart}) => {
                   ? `${item.quantity} g`
                   : `${item.quantity} pcs`}
               </Text>
-              <TextInput
-                style={styles.priceInput}
-                keyboardType="numeric"
-                placeholder="Enter Price"
-                value={prices[index]}
-                onChangeText={value => handlePriceChange(index, value)}
-              />
-              <Text style={styles.rowText}>
-                {(parseFloat(prices[index]) * item.quantity || 0).toFixed(2)}
+              <Text style={[styles.rowText, styles.priceColumn]}>
+                {item.price} {/* Ensure price from `item` is used here */}
+              </Text>
+              <Text style={[styles.rowText, styles.totalColumn]}>
+                {(parseFloat(item.price) * item.quantity || 0).toFixed(2)}{' '}
+                {/* Calculate total per item */}
               </Text>
             </View>
           ))}
+
           <View style={styles.totalRow}>
             <Text style={styles.totalText}>Total:</Text>
             <Text style={styles.totalText}>{totalAmount}</Text>

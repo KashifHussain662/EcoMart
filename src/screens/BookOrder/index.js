@@ -16,11 +16,19 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AddCategoryModal from '../../component/Modal/AddCategoryModal';
 
 const initialCategories = [
-  {id: 1, name: 'Chanwal', subcategories: [{name: 'Basmati', type: 'weight'}]},
+  {
+    id: 1,
+    name: 'Chanwal',
+    subcategories: [{name: 'Basmati', type: 'weight', price: 200}],
+  },
   {
     id: 2,
     name: 'Biscuits',
-    subcategories: [{name: 'Peanuts', type: 'quantity'}],
+    subcategories: [
+      {id: 1, name: 'Peanuts Rs:30', type: 'quantity', price: 30},
+      {id: 2, name: 'Peanuts Rs:20', type: 'quantity', price: 20},
+      {id: 3, name: 'Peanuts Rs:15', type: 'quantity', price: 15},
+    ],
   },
 ];
 
@@ -96,6 +104,10 @@ const BookOrder = () => {
     const selectedType = selectedCategory.subcategories.find(
       sub => sub.name === selectedSubcategory,
     ).type;
+    const selectedPrice = selectedCategory.subcategories.find(
+      sub => sub.name === selectedSubcategory,
+    ).price;
+
     let finalQty;
     let displayUnit;
 
@@ -113,6 +125,7 @@ const BookOrder = () => {
           subcategory: selectedSubcategory,
           quantity: finalQty,
           unit: displayUnit,
+          price: selectedPrice, // Ensure price is passed here
         };
 
         setReceiptData(prevData => [...prevData, newReceiptItem]);
@@ -131,6 +144,7 @@ const BookOrder = () => {
           subcategory: selectedSubcategory,
           quantity: qty,
           unit: 'P',
+          price: selectedPrice, // Ensure price is passed here
         };
 
         setReceiptData(prevData => [...prevData, newReceiptItem]);
