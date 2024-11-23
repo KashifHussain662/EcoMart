@@ -1,14 +1,12 @@
-// import libraries
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {COLORS} from '../../theme';
 
-// create a component
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/images/logo.png')} // Update the path to your logo
+        source={require('../../assets/images/logo.png')}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -16,7 +14,6 @@ const SplashScreen = () => {
   );
 };
 
-// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -26,6 +23,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     borderRadius: 50,
+    width: 400,
+    height: 350,
   },
   text: {
     fontSize: 24,

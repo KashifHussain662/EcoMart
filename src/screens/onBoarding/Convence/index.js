@@ -1,65 +1,25 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import images from "../../../images";
-import { COLORS } from "../../../Colors/colors";
-import { CustomButton, TextFields } from "../../../sharedComponent";
+//import liraries
+import React, {Component} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 
-const Convence = ({ navigation }) => {
+// create a component
+const Convence = () => {
   return (
     <View style={styles.container}>
-      <TextFields
-        headingText="Convenience and Support"
-        bodyText=" Enjoy hassle-free returns and 24/7 customer support for a smooth
-        shopping experience."
-      />
-      <Image source={images.icConvence} style={styles.image} />
-      <View style={styles.dotContainer}>
-        <View style={styles.dot} />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
-        <View style={[styles.dot, styles.activeDot]} />
-      </View>
-      <CustomButton
-        label="Next"
-        onPress={() => navigation.navigate("STarted")}
-        width={"90%"}
-        height={45}
-      />
+      <Text>Convence</Text>
     </View>
   );
 };
 
+// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: COLORS.secondary,
-    padding: 16,
-  },
-
-  image: {
-    height: 300,
-    width: 300,
-    resizeMode: "contain",
-    borderRadius: 20,
-    marginVertical: 20,
-  },
-  dotContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLORS.light,
-    marginHorizontal: 5,
-  },
-  activeDot: {
-    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2c3e50',
   },
 });
 
+//make this component available to the app
 export default Convence;

@@ -13,12 +13,11 @@ const Login = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  // Fetch user data from AsyncStorage
   const fetchUserData = async () => {
     try {
       const storedUser = await AsyncStorage.getItem('user');
       if (storedUser) {
-        setUserData(JSON.parse(storedUser)); // Parse stored user data
+        setUserData(JSON.parse(storedUser));
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -29,14 +28,11 @@ const Login = ({navigation}) => {
     fetchUserData();
   }, []);
 
-  console.log(userData); // Log user data for debugging
+  console.log(userData);
 
-  // Email validation regex
   const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Handle login
   const handleLogin = () => {
-    // Validate if fields are empty
     if (!username || !password) {
       showToast({
         message: 'Please enter both email and password',
@@ -45,7 +41,6 @@ const Login = ({navigation}) => {
       return;
     }
 
-    // Validate email format
     if (!validateEmail(username)) {
       showToast({
         message: 'Please enter a valid email address.',
@@ -54,12 +49,10 @@ const Login = ({navigation}) => {
       return;
     }
 
-    // Show loading indicator
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
 
-      // Compare input credentials with stored user data
       if (
         userData &&
         username === userData.email &&
@@ -83,12 +76,12 @@ const Login = ({navigation}) => {
         style={styles.logo}
       />
 
-      <TextFields
+      {/* <TextFields
         headingText="Log In"
         headingStyle={styles.title}
         bodyText="Welcome back! Please log in to continue."
         bodyStyle={styles.subtitle}
-      />
+      /> */}
 
       <View style={styles.formContainer}>
         <CustomTextInput
@@ -152,9 +145,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   logo: {
-    height: 120,
+    height: 200,
     resizeMode: 'contain',
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   title: {
     fontSize: 26,
