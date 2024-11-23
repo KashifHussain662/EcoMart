@@ -1,35 +1,42 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Image,
-  Modal,
-  ActivityIndicator,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Image, Modal, ActivityIndicator} from 'react-native';
 import {COLORS} from '../../theme';
+import {CustomTextInput, CustomButton, TextFields} from '../../component'; // Update path if necessary
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {CustomButton} from '../../component';
 import showToast from '../../Utility';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({navigation}) => {
-  // Hardcoded values
-  const hardcodedEmail = 'zohaib@gmail.com';
-  const hardcodedPassword = 'zohaib';
-
-  const [username, setUsername] = useState(hardcodedEmail);
-  const [password, setPassword] = useState(hardcodedPassword);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
 
-  const validateEmail = email => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
+  // Fetch user data from AsyncStorage
+  const fetchUserData = async () => {
+    try {
+      const storedUser = await AsyncStorage.getItem('user');
+      if (storedUser) {
+        setUserData(JSON.parse(storedUser)); // Parse stored user data
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  console.log(userData); // Log user data for debugging
+
+  // Email validation regex
+  const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Handle login
   const handleLogin = () => {
+    // Validate if fields are empty
     if (!username || !password) {
       showToast({
         message: 'Please enter both email and password',
@@ -38,6 +45,7 @@ const Login = ({navigation}) => {
       return;
     }
 
+    // Validate email format
     if (!validateEmail(username)) {
       showToast({
         message: 'Please enter a valid email address.',
@@ -46,11 +54,17 @@ const Login = ({navigation}) => {
       return;
     }
 
+    // Show loading indicator
     setLoading(true);
-
     setTimeout(() => {
       setLoading(false);
-      if (username === hardcodedEmail && password === hardcodedPassword) {
+
+      // Compare input credentials with stored user data
+      if (
+        userData &&
+        username === userData.email &&
+        password === userData.password
+      ) {
         showToast({
           message: 'Login successful! Welcome back.',
           type: 'success',
@@ -68,68 +82,63 @@ const Login = ({navigation}) => {
         source={require('../../assets/images/logo.png')}
         style={styles.logo}
       />
+
+      <TextFields
+        headingText="Log In"
+        headingStyle={styles.title}
+        bodyText="Welcome back! Please log in to continue."
+        bodyStyle={styles.subtitle}
+      />
+
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Log In</Text>
-
-        <View style={styles.inputContainer}>
-          <Icon name="user" size={20} color={COLORS.dark} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            onChangeText={setUsername}
-            value={username}
-            placeholderTextColor={COLORS.grey}
-            autoCapitalize="none"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Icon name="lock" size={20} color={COLORS.dark} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            onChangeText={setPassword}
-            value={password}
-            secureTextEntry={secureTextEntry}
-            placeholderTextColor={COLORS.grey}
-          />
-          <TouchableOpacity
-            onPress={() => setSecureTextEntry(!secureTextEntry)}>
-            <Icon
-              name={secureTextEntry ? 'eye-slash' : 'eye'}
-              size={20}
-              color={COLORS.dark}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <CustomButton
-          label="Log in"
-          width="90%"
-          height={50}
-          onPress={handleLogin}
+        <CustomTextInput
+          iconComponent={<Icon name="user" size={20} color={COLORS.dark} />}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          placeholderTextColor={COLORS.grey}
+          error={!username && 'Email is required'}
         />
 
-        <TouchableOpacity
-          style={styles.registerLinkContainer}
-          onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.registerLinkText}>Don't have an account? </Text>
-          <Text style={[styles.registerLinkText, styles.link]}>Create one</Text>
-        </TouchableOpacity>
+        <CustomTextInput
+          iconComponent={<Icon name="lock" size={20} color={COLORS.dark} />}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={secureTextEntry}
+          toggleSecureTextEntry={() => setSecureTextEntry(!secureTextEntry)}
+          placeholderTextColor={COLORS.grey}
+          error={!password && 'Password is required'}
+        />
+
+        <CustomButton
+          label="Log In"
+          onPress={handleLogin}
+          width="90%"
+          height={50}
+        />
+
+        <CustomButton
+          label="Create Account"
+          onPress={() => navigation.navigate('CreateAccount')}
+          style={styles.createAccountButton}
+          textStyle={{color: COLORS.primary}}
+        />
       </View>
 
-      <Modal
-        transparent
-        animationType="none"
-        visible={loading}
-        onRequestClose={() => setLoading(false)}>
-        <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator size="large" color={COLORS.dark} />
-            <Text style={styles.loadingText}>Logging in...</Text>
+      {loading && (
+        <Modal transparent animationType="fade" visible={loading}>
+          <View style={styles.modalBackground}>
+            <View style={styles.activityIndicatorWrapper}>
+              <ActivityIndicator size="large" color={COLORS.dark} />
+              <TextFields
+                bodyText="Logging in..."
+                bodyStyle={styles.loadingText}
+              />
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -145,50 +154,25 @@ const styles = StyleSheet.create({
   logo: {
     height: 120,
     resizeMode: 'contain',
-  },
-  formContainer: {
-    width: '100%',
-    alignItems: 'center',
+    marginBottom: 20,
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     color: COLORS.primary,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: COLORS.light,
     marginBottom: 25,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  formContainer: {
     width: '100%',
-    height: 55,
-    borderColor: COLORS.grey,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    backgroundColor: '#f9f9f9',
-    elevation: 3,
-    marginBottom: 20,
+    alignItems: 'center',
   },
-  input: {
-    flex: 1,
-    height: '100%',
-    fontSize: 16,
-    color: COLORS.dark,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  registerLinkContainer: {
-    flexDirection: 'row',
-    marginTop: 15,
-  },
-  registerLinkText: {
-    fontSize: 14,
-    color: COLORS.light,
-  },
-  link: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
+  createAccountButton: {
+    backgroundColor: COLORS.background,
+    marginTop: 10,
   },
   modalBackground: {
     flex: 1,

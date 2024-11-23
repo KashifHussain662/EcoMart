@@ -1,5 +1,8 @@
 import BookOrder from './BookOrder';
 import Welcome from './Welcome';
+import CreateAccount from './Account/Create';
+import LocationDetails from './Account/Location';
+import SecurityDetails from './Account/Security';
 import SplashScreen from './Splash';
 import Login from './Login';
 import Calculator from './Calculator';
@@ -20,4 +23,7 @@ export {
   Home,
   DetailScreen,
   MonthlyReport,
+  CreateAccount,
+  LocationDetails,
+  SecurityDetails,
 };

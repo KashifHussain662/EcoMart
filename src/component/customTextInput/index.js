@@ -7,11 +7,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {COLORS} from '../../theme';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
 
 const CustomTextInput = ({
-  icon,
+  iconComponent, // Accept dynamic icon components
   placeholder,
   value,
   onChangeText,
@@ -23,12 +21,7 @@ const CustomTextInput = ({
   return (
     <View style={styles.container}>
       <View style={[styles.inputContainer, error && styles.inputError]}>
-        <AntDesign
-          name={icon}
-          size={20}
-          color={error ? COLORS.error : COLORS.primary}
-          style={styles.icon}
-        />
+        {iconComponent && <View style={styles.icon}>{iconComponent}</View>}
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -39,11 +32,9 @@ const CustomTextInput = ({
         />
         {toggleSecureTextEntry && (
           <TouchableOpacity onPress={toggleSecureTextEntry}>
-            <Feather
-              name={secureTextEntry ? 'eye-off' : 'eye'}
-              size={20}
-              color={COLORS.primary}
-            />
+            <Text style={styles.toggleIcon}>
+              {secureTextEntry ? '👁️' : '👁️‍🗨️'}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -67,8 +58,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 15,
     backgroundColor: '#f9f9f9',
-    elevation: 3, // For subtle shadow on Android
-    shadowColor: '#000', // For subtle shadow on iOS
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -89,6 +80,10 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: COLORS.error,
+  },
+  toggleIcon: {
+    fontSize: 18,
+    color: COLORS.primary,
   },
 });
 
