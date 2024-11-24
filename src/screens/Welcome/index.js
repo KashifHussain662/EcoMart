@@ -20,21 +20,22 @@ const Welcome = () => {
 
   const slides = [
     {
-      title: 'Welcome to Our App',
+      title: 'Welcome to Zohaib Kiryana',
       description:
-        'Discover amazing features and services tailored just for you.',
-      image: require('../../assets/images/logo.png'),
+        'Fresh and quality groceries, from staples to snacks, delivered right to your doorstep.',
+      image: require('../../assets/images/welcome1.png'),
     },
     {
-      title: 'Simplify Your Life',
-      description: 'Our app helps you stay connected and productive every day!',
-      image: require('../../assets/images/logo.png'),
+      title: 'Shop with Ease',
+      description:
+        'Order everything from household essentials to beverages with just a few taps!',
+      image: require('../../assets/images/welcome2.png'),
     },
     {
-      title: 'Start Your Journey!',
+      title: 'Fast Delivery, Every Time!',
       description:
-        'Join us and experience a world of opportunities at your fingertips.',
-      image: require('../../assets/images/logo.png'),
+        'Get your daily essentials like spices, snacks, and more delivered quickly and safely to your home. No more long queues!',
+      image: require('../../assets/images/welcome3.png'),
     },
   ];
 
@@ -69,15 +70,6 @@ const Welcome = () => {
 
   return (
     <View style={styles.container}>
-      {/* Skip Button */}
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.skipText}>Skip</Text>
-      </TouchableOpacity>
-      <View></View>
-
-      {/* Slide Content */}
       <ScrollView
         horizontal
         pagingEnabled
@@ -146,8 +138,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   image: {
-    width: 250,
-    height: 250,
+    width: 350,
+    height: 350,
     resizeMode: 'contain',
     borderRadius: 10,
   },
@@ -174,7 +166,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.light,
   },
   nextButton: {
-    backgroundColor: COLORS.primary,
+    width: '70%',
+    backgroundColor: COLORS.dark,
     paddingVertical: 12,
     paddingHorizontal: 50,
     borderRadius: 8,
@@ -183,15 +176,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
+    alignItems: 'center',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: COLORS.background,
+    color: COLORS.light,
   },
   textContainer: {
     position: 'absolute',
-    top: 40,
+    top: 50,
     left: 0,
     right: 0,
     alignItems: 'center',

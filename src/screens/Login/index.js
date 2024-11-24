@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Image, Modal, ActivityIndicator} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Modal,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import {COLORS} from '../../theme';
 import {CustomTextInput, CustomButton, TextFields} from '../../component'; // Update path if necessary
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -124,10 +131,7 @@ const Login = ({navigation}) => {
           <View style={styles.modalBackground}>
             <View style={styles.activityIndicatorWrapper}>
               <ActivityIndicator size="large" color={COLORS.dark} />
-              <TextFields
-                bodyText="Logging in..."
-                bodyStyle={styles.loadingText}
-              />
+              <Text style={styles.loadingText}>Logging in...</Text>
             </View>
           </View>
         </Modal>
