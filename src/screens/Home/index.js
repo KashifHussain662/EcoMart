@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,48 +9,37 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {COLORS} from '../../theme';
 import {useNavigation} from '@react-navigation/native';
+import API_URLS from '../../Api';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [data, setData] = useState([]);
   const navigation = useNavigation();
 
-  const data = [
-    {
-      id: '1',
-      title: 'Rice',
-      price: 1.5,
-      inStock: true,
-      category: 'Grains',
-      imageUrl: require('../../assets/images/chanwal.jpeg'),
-    },
-    {
-      id: '2',
-      title: 'Wheat Flour',
-      price: 1.2,
-      inStock: true,
-      category: 'Grains',
-      imageUrl: require('../../assets/images/wheat_flour.jpg'),
-    },
-    {
-      id: '3',
-      title: 'Sugar',
-      price: 0.8,
-      inStock: true,
-      category: 'Staples',
-      imageUrl: require('../../assets/images/sugar.jpeg'),
-    },
-    {
-      id: '4',
-      title: 'Salt',
-      price: 0.3,
-      inStock: true,
-      category: 'Staples',
-      imageUrl: require('../../assets/images/salt.jpeg'),
-    },
-  ];
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(API_URLS.GET_PRODUCT);
+      const products = response.data;
+
+      const formattedProducts = products.map(item => ({
+        ...item,
+        price: parseFloat(item.price),
+      }));
+
+      // console.log(formattedProducts);
+      setData(formattedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
 
   const filteredData = data.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -84,7 +73,7 @@ const Home = () => {
 
       <FlatList
         data={filteredData}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         style={styles.cardList}
         contentContainerStyle={styles.contentContainer}
         numColumns={2}
@@ -93,13 +82,15 @@ const Home = () => {
             style={styles.card}
             onPress={() => handleCardPress(item)}>
             <Image
-              source={item.imageUrl}
+              source={{uri: item.image_url}}
               style={styles.cardImage}
               accessibilityLabel={item.title}
             />
             <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardPrice}>${item.price.toFixed(2)}</Text>
+              <Text style={styles.cardPrice}>
+                ${parseFloat(item.price).toFixed(2)}
+              </Text>
               {!item.inStock && (
                 <Text style={styles.outOfStock}>Out of Stock</Text>
               )}

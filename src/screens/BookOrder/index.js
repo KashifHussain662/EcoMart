@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,33 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Modal,
 } from 'react-native';
 import {COLORS} from '../../theme';
-import {Picker} from '@react-native-picker/picker';
 import {Receipt} from '../../component';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import AddCategoryModal from '../../component/Modal/AddCategoryModal';
-
-const initialCategories = [
-  {
-    id: 1,
-    name: 'Chanwal',
-    subcategories: [{name: 'Basmati', type: 'weight', price: 200}],
-  },
-  {
-    id: 2,
-    name: 'Biscuits',
-    subcategories: [
-      {id: 1, name: 'Peanuts Rs:30', type: 'quantity', price: 30},
-      {id: 2, name: 'Peanuts Rs:20', type: 'quantity', price: 20},
-      {id: 3, name: 'Peanuts Rs:15', type: 'quantity', price: 15},
-    ],
-  },
-];
+import API_URLS from '../../Api';
+import {Picker} from '@react-native-picker/picker';
 
 const BookOrder = () => {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState([]); // Initially empty
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [weight, setWeight] = useState({});
@@ -41,37 +22,27 @@ const BookOrder = () => {
   const [unit, setUnit] = useState({});
   const [showReceipt, setShowReceipt] = useState(false);
   const [receiptData, setReceiptData] = useState([]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newSubcategoryName, setNewSubcategoryName] = useState('');
-  const [newSubcategoryType, setNewSubcategoryType] = useState('weight');
-  const [newSubcategories, setNewSubcategories] = useState([
-    {name: '', type: 'weight'},
-  ]);
 
-  const handleAddSubcategory = () => {
-    setNewSubcategories([...newSubcategories, {name: '', type: 'weight'}]);
-  };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(API_URLS.GET_PRODUCT1);
+        const {data} = await response.json(); // Destructure to get 'data'
+        // console.log('Fetched categories:', data); // Debugging log
+        if (Array.isArray(data)) {
+          setCategories(data); // Now setCategories will work correctly
+        } else {
+          console.error('Invalid data format:', data);
+          Alert.alert('Error', 'Invalid data received from the server.');
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        Alert.alert('Error', 'Failed to fetch categories');
+      }
+    };
 
-  const handleSubcategoryChange = (index, value) => {
-    const updatedSubcategories = [...newSubcategories];
-    updatedSubcategories[index].name = value;
-    setNewSubcategories(updatedSubcategories);
-  };
-
-  const handleSubcategoryTypeChange = (index, value) => {
-    const updatedSubcategories = [...newSubcategories];
-    updatedSubcategories[index].type = value;
-    setNewSubcategories(updatedSubcategories);
-  };
-
-  const openModal = () => {
-    setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+    fetchCategories();
+  }, []);
 
   const handleCategorySelect = categoryId => {
     const category = categories.find(cat => cat.id === categoryId);
@@ -161,25 +132,6 @@ const BookOrder = () => {
     }
   };
 
-  const handleAddCategory = () => {
-    if (newCategoryName && newSubcategories.length > 0) {
-      const newCategory = {
-        id: categories.length + 1,
-        name: newCategoryName,
-        subcategories: newSubcategories.filter(sub => sub.name), // Only add subcategories that have names
-      };
-      setCategories(prevCategories => [...prevCategories, newCategory]);
-      setNewCategoryName('');
-      setNewSubcategories([{name: '', type: 'weight'}]); // Reset subcategories
-      closeModal();
-    } else {
-      Alert.alert(
-        'Incomplete Information',
-        'Please enter category name and at least one subcategory name.',
-      );
-    }
-  };
-
   return (
     <>
       <View style={styles.header}>
@@ -200,9 +152,6 @@ const BookOrder = () => {
                 <Text style={styles.categoryText}>{category.name}</Text>
               </TouchableOpacity>
             ))}
-            <TouchableOpacity onPress={openModal} style={styles.categoryAdd}>
-              <Icon name="add" color="black" style={{fontSize: 30}} />
-            </TouchableOpacity>
           </ScrollView>
 
           {selectedCategory && (
@@ -274,17 +223,6 @@ const BookOrder = () => {
           {showReceipt && <Receipt cart={receiptData} />}
         </ScrollView>
       </View>
-
-      <AddCategoryModal
-        isVisible={isModalVisible}
-        onClose={closeModal}
-        newCategoryName={newCategoryName}
-        setNewCategoryName={setNewCategoryName}
-        newSubcategories={newSubcategories}
-        setNewSubcategories={setNewSubcategories}
-        handleAddSubcategory={handleAddSubcategory}
-        handleAddCategory={handleAddCategory}
-      />
     </>
   );
 };
@@ -343,10 +281,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  categoryAdd: {
-    paddingHorizontal: 12,
-    paddingVertical: 14,
   },
   selectedCategoryText: {
     fontSize: 18,
@@ -412,49 +346,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   doneButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalInput: {
-    width: '100%',
-    padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 15,
-  },
-  modalButton: {
-    backgroundColor: COLORS.secondary,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  modalButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

@@ -1,9 +1,12 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import axios from 'axios';
 import {CustomButton, CustomTextInput, TextFields} from '../../../component';
 import {COLORS} from '../../../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import showToast from '../../../Utility';
+import API_URLS from '../../../Api';
 
 const SecurityDetails = ({navigation, route}) => {
   const {firstName, lastName, gender, country, city, address} = route.params;
@@ -18,6 +21,12 @@ const SecurityDetails = ({navigation, route}) => {
     setSecureTextEntry(!secureTextEntry);
   };
 
+  const validatePassword = password => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async () => {
     if (!phoneNumber || !email || !password || !confirmPassword) {
       setError(prev => ({...prev, general: 'Please fill out all fields.'}));
@@ -25,7 +34,19 @@ const SecurityDetails = ({navigation, route}) => {
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      showToast({
+        message: 'Passwords do not match',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      showToast({
+        message:
+          'Password must be 8+ characters with uppercase, lowercase, number, and symbol.',
+        type: 'error',
+      });
       return;
     }
 
@@ -42,27 +63,35 @@ const SecurityDetails = ({navigation, route}) => {
     };
 
     try {
-      // const response = await fetch(API_URLS.REGISTER_USER, {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(accountDetails),
-      // });
-      // const data = await response.json();
+      const response = await axios.post(
+        API_URLS.REGISTER_USER,
+        accountDetails,
+        {
+          headers: {'Content-Type': 'application/json'},
+        },
+      );
 
-      const data = accountDetails; // Mock response
+      const data = response.data; // The response data is directly available in 'data' with axios
+      console.log(data);
 
-      // Log the account details for debugging
-      console.log('Account Details:', data);
-
-      // Save user data locally
-      await AsyncStorage.setItem('user', JSON.stringify(accountDetails));
-      navigation.navigate('Login');
-
-      // if (data.message === 'User created successfully') {
-      //   navigation.navigate('Home');
-      // }
+      if (data.message) {
+        showToast({
+          message: data.message,
+          type: 'success',
+        });
+        navigation.navigate('Login');
+      } else if (data.error) {
+        showToast({
+          message: data.error,
+          type: 'error',
+        });
+      }
     } catch (error) {
       console.error('Error:', error);
+      showToast({
+        message: 'Something went wrong.',
+        type: 'error',
+      });
     }
   };
 

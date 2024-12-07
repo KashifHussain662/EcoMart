@@ -13,11 +13,12 @@ const LocationDetails = ({navigation, route}) => {
   const [error, setError] = useState({});
 
   const countryCityData = {
-    USA: ['New York', 'Los Angeles', 'Chicago'],
-    Canada: ['Toronto', 'Vancouver', 'Montreal'],
-    UK: ['London', 'Birmingham', 'Manchester'],
-    India: ['Delhi', 'Mumbai', 'Bangalore'],
-    Australia: ['Sydney', 'Melbourne', 'Brisbane'],
+    Pakistan: ['Ghotki'],
+    // USA: ['New York', 'Los Angeles', 'Chicago'],
+    // Canada: ['Toronto', 'Vancouver', 'Montreal'],
+    // UK: ['London', 'Birmingham', 'Manchester'],
+    // India: ['Delhi', 'Mumbai', 'Bangalore'],
+    // Australia: ['Sydney', 'Melbourne', 'Brisbane'],
   };
 
   const handleNext = () => {

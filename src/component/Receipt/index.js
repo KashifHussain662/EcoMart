@@ -1,17 +1,17 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Alert,
   TouchableOpacity,
-  TextInput,
   ScrollView,
   Image,
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
 import {COLORS} from '../../theme';
+import API_URLS from '../../Api';
 
 const generateReceiptNumber = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -19,17 +19,17 @@ const generateReceiptNumber = () => {
 
 const Receipt = ({cart}) => {
   const viewShotRef = useRef(null);
-  const customerName = '######';
+  const customerName = 'John Doe'; // Replace with dynamic data as needed
   const receiptNumber = generateReceiptNumber();
   const date = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString();
 
-  // Use the actual prices from the cart to calculate total
   const totalAmount = cart
-    .reduce((total, item) => {
-      const quantity = item.quantity || 0;
-      return total + (parseFloat(item.price) || 0) * quantity;
-    }, 0)
+    .reduce(
+      (total, item) =>
+        total + (parseFloat(item.price) || 0) * (item.quantity || 0),
+      0,
+    )
     .toFixed(2);
 
   const handleShare = async () => {
@@ -44,6 +44,44 @@ const Receipt = ({cart}) => {
       } catch (error) {
         Alert.alert('Error sharing the receipt', error.message);
       }
+    }
+  };
+
+  const bookOrder = async () => {
+    const orderData = {
+      cart,
+      customer_name: customerName,
+      total_amount: totalAmount,
+    };
+
+    try {
+      const response = await fetch(API_URLS.ORDER_BOOK, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const rawResponse = await response.text(); // Get the raw response as text
+      console.log('Raw response:', rawResponse); // Log it
+
+      if (response.ok) {
+        const result = JSON.parse(rawResponse); // Parse the response manually
+        if (result.status === 'success') {
+          Alert.alert(
+            'Success',
+            `Order booked! Receipt Number: ${result.receipt_number}`,
+          );
+        } else {
+          Alert.alert('Error', result.message || 'Something went wrong');
+        }
+      } else {
+        Alert.alert('Error', 'Request failed with status: ' + response.status);
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message);
+      console.log('Error', error.message);
     }
   };
 
@@ -77,9 +115,7 @@ const Receipt = ({cart}) => {
             <Text style={styles.headerText}>S No</Text>
             <Text style={styles.headerText}>Item</Text>
             <Text style={styles.headerText}>Qty</Text>
-            <Text style={[styles.headerText, styles.priceColumn]}>
-              Price/Kg
-            </Text>
+            <Text style={[styles.headerText, styles.priceColumn]}>Price</Text>
             <Text style={[styles.headerText, styles.totalColumn]}>Total</Text>
           </View>
 
@@ -87,19 +123,12 @@ const Receipt = ({cart}) => {
             <View key={index} style={styles.tableRow}>
               <Text style={styles.rowText}>{index + 1}</Text>
               <Text style={styles.rowText}>{item.subcategory}</Text>
-              <Text style={styles.rowText}>
-                {item.unit === 'kg'
-                  ? `${item.quantity} kg`
-                  : item.unit === 'g'
-                  ? `${item.quantity} g`
-                  : `${item.quantity} pcs`}
-              </Text>
+              <Text style={styles.rowText}>{item.quantity}</Text>
               <Text style={[styles.rowText, styles.priceColumn]}>
-                {item.price} {/* Ensure price from `item` is used here */}
+                {item.price}
               </Text>
               <Text style={[styles.rowText, styles.totalColumn]}>
-                {(parseFloat(item.price) * item.quantity || 0).toFixed(2)}{' '}
-                {/* Calculate total per item */}
+                {(parseFloat(item.price) * item.quantity || 0).toFixed(2)}
               </Text>
             </View>
           ))}
@@ -117,8 +146,11 @@ const Receipt = ({cart}) => {
         </View>
       </ViewShot>
 
-      <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
-        <Text style={styles.shareText}>Share Receipt</Text>
+      <TouchableOpacity onPress={bookOrder} style={styles.actionButton}>
+        <Text style={styles.actionText}>Book Order</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleShare} style={styles.actionButton}>
+        <Text style={styles.actionText}>Share Receipt</Text>
       </TouchableOpacity>
     </>
   );
@@ -130,49 +162,41 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     borderRadius: 10,
     backgroundColor: '#ffffff',
+    padding: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 5,
-    // paddingBottom: 20,
   },
   logoContainer: {
-    backgroundColor: '#000',
     alignItems: 'center',
+    marginBottom: 10,
   },
   logo: {
-    width: '40%',
+    width: 150,
     height: 70,
     resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: '#f1f1f1',
+    marginBottom: 10,
   },
   receiptInfo: {
     fontSize: 14,
     color: '#2c3e50',
-    fontWeight: '500',
-  },
-  receiptContainer: {
-    // marginHorizontal: 15,
-    // marginTop: 10,
   },
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.background,
-    paddingVertical: 12,
-    marginBottom: 5,
+    backgroundColor: COLORS.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
   },
   headerText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#ffffff',
     flex: 1,
     textAlign: 'center',
@@ -180,7 +204,7 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#f1f1f1',
   },
@@ -190,60 +214,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2c3e50',
   },
-  priceInput: {
-    width: '20%',
-    fontSize: 12,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderColor: '#bdc3c7',
-    borderRadius: 5,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    color: '#34495e',
-  },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingVertical: 10,
     backgroundColor: '#f7f7f7',
-    padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#f1f1f1',
   },
   totalText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#e74c3c',
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
-  shareButton: {
-    backgroundColor: COLORS.background,
-    paddingVertical: 14,
+  footer: {
+    marginTop: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7',
+  },
+  footerText: {
+    fontSize: 12,
+    color: '#7f8c8d',
+  },
+  actionButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
     marginHorizontal: 30,
-    marginTop: 20,
+    marginTop: 10,
     borderRadius: 25,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
   },
-  shareText: {
+  actionText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#ffffff',
-  },
-  footer: {
-    marginTop: 20,
-    paddingVertical: 10,
-    backgroundColor: '#f7f7f7',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  footerText: {
-    fontSize: 14,
-    color: 'black',
-    textAlign: 'center',
   },
 });
 

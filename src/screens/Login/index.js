@@ -7,39 +7,78 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
+import axios from 'axios'; // Import axios
 import {COLORS} from '../../theme';
-import {CustomTextInput, CustomButton, TextFields} from '../../component'; // Update path if necessary
+import {CustomTextInput, CustomButton} from '../../component'; // Update path if necessary
 import Icon from 'react-native-vector-icons/FontAwesome';
 import showToast from '../../Utility';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URLS from '../../Api';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
-
-  const fetchUserData = async () => {
-    try {
-      const storedUser = await AsyncStorage.getItem('user');
-      if (storedUser) {
-        setUserData(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  console.log(userData);
 
   const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleLogin = () => {
+  // const handleLogin = async () => {
+  //   if (!username || !password) {
+  //     showToast({
+  //       message: 'Please enter both email and password',
+  //       type: 'error',
+  //     });
+  //     return;
+  //   }
+
+  //   if (!validateEmail(username)) {
+  //     showToast({
+  //       message: 'Please enter a valid email address.',
+  //       type: 'error',
+  //     });
+  //     return;
+  //   }
+
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await fetch(API_URLS.LOGIN_USER, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({email: username, password}),
+  //     });
+
+  //     const responseJson = await response.json();
+  //     console.log(responseJson);
+
+  //     setLoading(false);
+
+  //     if (responseJson.error) {
+  //       showToast({message: responseJson.error, type: 'error'});
+  //     } else {
+  //       showToast({
+  //         message: 'Login successful! Welcome back.',
+  //         type: 'success',
+  //       });
+
+  //       await AsyncStorage.setItem('user', JSON.stringify(responseJson.user));
+
+  //       navigation.navigate('Tabs');
+  //     }
+  //   } catch (error) {
+  //     setLoading(false);
+  //     showToast({
+  //       message: 'An error occurred while logging in. Please try again.',
+  //       type: 'error',
+  //     });
+  //     console.error('Login Error:', error);
+  //   }
+  // };
+
+  const handleLogin = async () => {
     if (!username || !password) {
       showToast({
         message: 'Please enter both email and password',
@@ -57,23 +96,38 @@ const Login = ({navigation}) => {
     }
 
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      const response = await axios.post(API_URLS.LOGIN_USER, {
+        email: username,
+        password,
+      });
+
+      const responseJson = response.data;
+      // console.log(responseJson);
+
       setLoading(false);
 
-      if (
-        userData &&
-        username === userData.email &&
-        password === userData.password
-      ) {
+      if (responseJson.error) {
+        showToast({message: responseJson.error, type: 'error'});
+      } else {
         showToast({
           message: 'Login successful! Welcome back.',
           type: 'success',
         });
+
+        await AsyncStorage.setItem('user', JSON.stringify(responseJson.user));
+
         navigation.navigate('Tabs');
-      } else {
-        showToast({message: 'Invalid email or password.', type: 'error'});
       }
-    }, 2000);
+    } catch (error) {
+      setLoading(false);
+      showToast({
+        message: 'An error occurred while logging in. Please try again.',
+        type: 'error',
+      });
+      console.error('Login Error:', error);
+    }
   };
 
   return (
@@ -83,17 +137,10 @@ const Login = ({navigation}) => {
         style={styles.logo}
       />
 
-      {/* <TextFields
-        headingText="Log In"
-        headingStyle={styles.title}
-        bodyText="Welcome back! Please log in to continue."
-        bodyStyle={styles.subtitle}
-      /> */}
-
       <View style={styles.formContainer}>
         <CustomTextInput
           iconComponent={<Icon name="user" size={20} color={COLORS.dark} />}
-          placeholder="Username"
+          placeholder="Email"
           value={username}
           onChangeText={setUsername}
           placeholderTextColor={COLORS.grey}
@@ -151,17 +198,6 @@ const styles = StyleSheet.create({
   logo: {
     height: 200,
     resizeMode: 'contain',
-    // marginBottom: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: COLORS.primary,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.light,
-    marginBottom: 25,
   },
   formContainer: {
     width: '100%',
