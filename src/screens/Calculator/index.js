@@ -1,163 +1,66 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
   View,
+  Text,
+  TextInput,
   TouchableOpacity,
+  FlatList,
+  Alert,
+  StyleSheet,
 } from 'react-native';
-import {create, all} from 'mathjs';
-import {COLORS} from '../../theme';
-
-const math = create(all, {});
+import axios from 'axios';
+import API_URLS from '../../Api';
+import {CategoryForm, CategoryList1} from '../../component';
 
 const Calculator = () => {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+  const [subcategories, setSubcategories] = useState([
+    {name: '', type: '', price: ''},
+  ]);
+  const [categoriesData, setCategoriesData] = useState([]);
+  const [isAddingSubcategories, setIsAddingSubcategories] = useState(false);
 
-  const operators = ['+', '-', '*', '/'];
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-  const handleInput = value => {
-    const lastChar = input[input.length - 1];
-
-    if (result) {
-      if (operators.includes(value)) {
-        setInput(result + value);
-        setResult('');
-      } else {
-        setInput(value);
-        setResult('');
-      }
-    } else if (operators.includes(value) && operators.includes(lastChar)) {
-      setInput(input.slice(0, -1) + value);
-    } else {
-      setInput(input + value);
-    }
-  };
-
-  const calculateResult = () => {
+  const fetchCategories = async () => {
     try {
-      const evaluatedResult = math.evaluate(input);
-      setResult(evaluatedResult.toString());
+      const response = await axios.get(API_URLS.GET_PRODUCT1);
+      if (response.data.status === 'success') {
+        setCategoriesData(response.data.data);
+      } else {
+        Alert.alert('Error', response.data.message);
+      }
     } catch (error) {
-      console.error(error);
-      setResult('Error');
+      Alert.alert('Error', 'Failed to fetch categories.');
     }
-  };
-
-  const clearInput = () => {
-    setInput('');
-    setResult('');
-  };
-
-  const backspace = () => {
-    setInput(input.slice(0, -1));
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Calculator</Text>
-      </View>
-      <View style={styles.resultContainer}>
-        <Text style={styles.resultText}>{result || input || '0'}</Text>
-      </View>
-      <View style={styles.buttonsContainer}>
-        <View style={styles.row}>
-          <Button title="C" onPress={clearInput} />
-          <Button title="←" onPress={backspace} />
-          <Button title="/" onPress={() => handleInput('/')} />
-        </View>
-        <View style={styles.row}>
-          <Button title="7" onPress={() => handleInput('7')} />
-          <Button title="8" onPress={() => handleInput('8')} />
-          <Button title="9" onPress={() => handleInput('9')} />
-          <Button title="*" onPress={() => handleInput('*')} />
-        </View>
-        <View style={styles.row}>
-          <Button title="4" onPress={() => handleInput('4')} />
-          <Button title="5" onPress={() => handleInput('5')} />
-          <Button title="6" onPress={() => handleInput('6')} />
-          <Button title="-" onPress={() => handleInput('-')} />
-        </View>
-        <View style={styles.row}>
-          <Button title="1" onPress={() => handleInput('1')} />
-          <Button title="2" onPress={() => handleInput('2')} />
-          <Button title="3" onPress={() => handleInput('3')} />
-          <Button title="+" onPress={() => handleInput('+')} />
-        </View>
-        <View style={styles.row}>
-          <Button title="0" onPress={() => handleInput('0')} />
-          <Button title="." onPress={() => handleInput('.')} />
-          <Button
-            title="="
-            onPress={calculateResult}
-            style={styles.equalsButton}
-          />
-        </View>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Add Category</Text>
+      <CategoryForm
+        categoryName={categoryName}
+        setCategoryName={setCategoryName}
+        subcategories={subcategories}
+        setSubcategories={setSubcategories}
+        isAddingSubcategories={isAddingSubcategories}
+        setIsAddingSubcategories={setIsAddingSubcategories}
+        fetchCategories={fetchCategories}
+      />
+      <Text style={styles.title}>Categories List</Text>
+      <CategoryList1
+        categoriesData={categoriesData}
+        fetchCategories={fetchCategories}
+      />
+    </View>
   );
 };
 
-const Button = ({title, onPress, style}) => (
-  <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-    <Text style={styles.buttonText}>{title}</Text>
-  </TouchableOpacity>
-);
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    padding: 20,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    color: '#fff',
-  },
-  resultContainer: {
-    flex: 2,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    backgroundColor: '#dcdcdc',
-    padding: 20,
-  },
-  resultText: {
-    fontSize: 48,
-    color: '#000',
-  },
-  buttonsContainer: {
-    flex: 5,
-    padding: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  button: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ededed',
-    padding: 20,
-    margin: 5,
-    borderRadius: 5,
-  },
-  buttonText: {
-    fontSize: 24,
-    color: '#000',
-  },
-  equalsButton: {
-    backgroundColor: COLORS.primary,
-    color: 'white',
-  },
+  container: {flex: 1, padding: 20, backgroundColor: '#f9f9f9'},
+  title: {fontSize: 22, fontWeight: '600', marginBottom: 15, color: '#333'},
 });
 
 export default Calculator;
