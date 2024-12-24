@@ -15,6 +15,7 @@ import CustomerScreen from './Khata';
 import Home from './Home';
 import DetailScreen from './DetailScreen';
 import MonthlyReport from './MonthlyReport';
+import Category from './Add_Category';
 
 export {
   SplashScreen,
@@ -34,4 +35,5 @@ export {
   CreateAccount,
   LocationDetails,
   SecurityDetails,
+  Category,
 };

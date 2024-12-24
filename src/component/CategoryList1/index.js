@@ -7,11 +7,12 @@ import {
   Alert,
   StyleSheet,
   Modal,
-  TextInput,
-  Button,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import API_URLS from '../../Api';
+import CustomButton from '../customButton';
+import CustomTextInput from '../customTextInput';
+import showToast from '../../Utility';
 
 const CategoryList1 = ({categoriesData, fetchCategories}) => {
   const [expandedCategoryId, setExpandedCategoryId] = useState(null);
@@ -64,20 +65,73 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
 
               const data = await response.json();
               if (data.status === 'success') {
-                Alert.alert('Success', 'Subcategory deleted successfully!');
-                fetchCategories(); // Refresh the categories list after deletion
+                showToast({
+                  message: 'Subcategory deleted successfully!',
+                  type: 'success',
+                });
+                fetchCategories();
               } else {
-                Alert.alert(
-                  'Error',
-                  data.message || 'Failed to delete subcategory',
-                );
+                showToast({
+                  message: data.message || 'Failed to delete subcategory',
+                  type: 'error',
+                });
               }
             } catch (error) {
               console.error(error);
-              Alert.alert(
-                'Error',
-                'An error occurred while deleting the subcategory.',
-              );
+              showToast({
+                message: 'An error occurred while deleting the subcategory.',
+                type: 'error',
+              });
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const handleCategoryDelete = categoryId => {
+    Alert.alert(
+      'Delete Category',
+      `Are you sure you want to delete this category and all its subcategories?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              const response = await fetch(API_URLS.GET_PRODUCT1, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  category_id: categoryId, // Sending category ID to be deleted
+                }),
+              });
+
+              const data = await response.json();
+              if (data.status === 'success') {
+                showToast({
+                  message:
+                    'Category and associated subcategories deleted successfully!',
+                  type: 'success',
+                });
+                fetchCategories(); // Refresh the categories list after deletion
+              } else {
+                showToast({
+                  message: data.message || 'Failed to delete category',
+                  type: 'error',
+                });
+              }
+            } catch (error) {
+              console.error(error);
+              showToast({
+                message: 'An error occurred while deleting the category.',
+                type: 'error',
+              });
             }
           },
         },
@@ -102,15 +156,24 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
 
       const data = await response.json();
       if (data.status === 'success') {
-        Alert.alert('Success', 'Subcategory updated successfully!');
+        showToast({
+          message: 'Subcategory updated successfully!',
+          type: 'success',
+        });
         setIsModalVisible(false);
         fetchCategories(); // Refresh the categories list after updating
       } else {
-        Alert.alert('Error', data.message || 'Failed to update subcategory');
+        showToast({
+          message: data.message || 'Failed to update subcategory',
+          type: 'error',
+        });
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'An error occurred while updating the subcategory.');
+      showToast({
+        message: 'An error occurred while updating the subcategory.',
+        type: 'error',
+      });
     }
   };
 
@@ -127,16 +190,27 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
               <Text style={styles.categoryName}>
                 No: {index + 1} {item.name}
               </Text>
-              <Icon
-                name={
-                  expandedCategoryId === item.id
-                    ? 'keyboard-arrow-up'
-                    : 'keyboard-arrow-down'
-                }
-                size={24}
-                color="#333"
-                style={styles.arrowIcon}
-              />
+
+              <View style={styles.iconContainer}>
+                <Icon
+                  name={
+                    expandedCategoryId === item.id
+                      ? 'keyboard-arrow-up'
+                      : 'keyboard-arrow-down'
+                  }
+                  size={24}
+                  color="#333"
+                  style={styles.arrowIcon}
+                />
+
+                <Icon
+                  name="delete"
+                  size={24}
+                  color="red"
+                  onPress={() => handleCategoryDelete(item.id)}
+                  style={styles.deleteIcon}
+                />
+              </View>
             </TouchableOpacity>
 
             {expandedCategoryId === item.id &&
@@ -180,24 +254,21 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Edit Subcategory</Text>
 
-            <TextInput
-              style={styles.input}
+            <CustomTextInput
               placeholder="Subcategory Name"
               value={editedSubcategory.name}
               onChangeText={text =>
                 setEditedSubcategory({...editedSubcategory, name: text})
               }
             />
-            <TextInput
-              style={styles.input}
+            <CustomTextInput
               placeholder="Type"
               value={editedSubcategory.type}
               onChangeText={text =>
                 setEditedSubcategory({...editedSubcategory, type: text})
               }
             />
-            <TextInput
-              style={styles.input}
+            <CustomTextInput
               placeholder="Price"
               value={editedSubcategory.price}
               onChangeText={text =>
@@ -206,8 +277,19 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
             />
 
             <View style={styles.modalButtons}>
-              <Button title="Save Changes" onPress={handleSaveChanges} />
-              <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+              <CustomButton
+                label="Save Changes"
+                onPress={handleSaveChanges}
+                style={{backgroundColor: 'green'}}
+              />
+              <CustomButton
+                label="Cancel"
+                onPress={() => setIsModalVisible(false)}
+                style={{backgroundColor: 'red'}}
+              />
+
+              {/* <Button title="Save Changes" onPress={handleSaveChanges}  />
+              <Button title="Cancel" onPress={() => setIsModalVisible(false)} /> */}
             </View>
           </View>
         </View>
@@ -235,9 +317,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  arrowIcon: {
-    marginLeft: 10,
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
+  arrowIcon: {
+    marginRight: 10,
+  },
+  deleteIcon: {
+    marginLeft: 0,
+  },
+
   tableContainer: {
     borderWidth: 1,
     borderColor: '#ddd',
@@ -272,11 +362,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconButton: {
-    padding: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginLeft: 10,
   },
+
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -285,22 +373,22 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: 300,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   input: {
     height: 40,
     borderColor: '#ddd',
     borderWidth: 1,
     marginBottom: 15,
-    paddingLeft: 10,
-    borderRadius: 5,
+    paddingLeft: 8,
+    borderRadius: 4,
   },
   modalButtons: {
     flexDirection: 'row',

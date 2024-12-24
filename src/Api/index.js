@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://192.168.1.7/zk-mart/public/api/';
+const API_BASE_URL = 'http://192.168.1.6/zk-mart/public/api/';
 
 const API_URLS = {
   REGISTER_USER: `${API_BASE_URL}Register/register.php`,

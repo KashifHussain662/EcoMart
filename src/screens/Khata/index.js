@@ -44,11 +44,11 @@ const CustomerScreen = () => {
       <View style={styles.topBoxes}>
         <View style={styles.box}>
           <Text style={styles.amountNegative}>Rs. 0</Text>
-          <Text style={styles.text}>Maine lene hain</Text>
+          <Text style={styles.text}>Maine dene hain</Text>
         </View>
         <View style={styles.box}>
           <Text style={styles.amountPositive}>Rs. 1,668</Text>
-          <Text style={styles.text}>Maine dene hain</Text>
+          <Text style={styles.text}>Maine lene hain</Text>
         </View>
       </View>
 
