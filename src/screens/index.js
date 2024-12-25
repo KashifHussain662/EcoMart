@@ -1,9 +1,9 @@
 import BookOrder from './BookOrder';
 import Welcome from './Welcome';
-import Convence from './onBoarding/Convence';
-import Experience from './onBoarding/Experience';
-import GetStarted from './onBoarding/GetStarted';
-import Highlights from './onBoarding/Highlights';
+// import Convence from './onBoarding/Convence';
+// import Experience from './onBoarding/Experience';
+// import GetStarted from './onBoarding/GetStarted';
+// import Highlights from './onBoarding/Highlights';
 import CreateAccount from './Account/Create';
 import LocationDetails from './Account/Location';
 import SecurityDetails from './Account/Security';
@@ -19,11 +19,11 @@ import Category from './Add_Category';
 
 export {
   SplashScreen,
-  Experience,
+  // Experience,
   Welcome,
-  Convence,
-  GetStarted,
-  Highlights,
+  // Convence,
+  // GetStarted,
+  // Highlights,
   BookOrder,
   Login,
   Calculator,

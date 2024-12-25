@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import API_URLS from '../../Api';
 import {CategoryForm, CategoryList1} from '../../component';
+import {COLORS} from '../../theme';
 
 const Category = () => {
   const [categoryName, setCategoryName] = useState('');
@@ -38,29 +39,45 @@ const Category = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add Category</Text>
-      <CategoryForm
-        categoryName={categoryName}
-        setCategoryName={setCategoryName}
-        subcategories={subcategories}
-        setSubcategories={setSubcategories}
-        isAddingSubcategories={isAddingSubcategories}
-        setIsAddingSubcategories={setIsAddingSubcategories}
-        fetchCategories={fetchCategories}
-      />
-      <Text style={styles.title}>Categories List</Text>
-      <CategoryList1
-        categoriesData={categoriesData}
-        fetchCategories={fetchCategories}
-      />
-    </View>
+    <>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Manage Categories</Text>
+      </View>
+
+      <View style={styles.container}>
+        <Text style={styles.title}>Add Category</Text>
+
+        <CategoryForm
+          categoryName={categoryName}
+          setCategoryName={setCategoryName}
+          subcategories={subcategories}
+          setSubcategories={setSubcategories}
+          isAddingSubcategories={isAddingSubcategories}
+          setIsAddingSubcategories={setIsAddingSubcategories}
+          fetchCategories={fetchCategories}
+        />
+        <Text style={styles.title}>Categories List</Text>
+        <CategoryList1
+          categoriesData={categoriesData}
+          fetchCategories={fetchCategories}
+        />
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 20, backgroundColor: '#f9f9f9'},
   title: {fontSize: 22, fontWeight: '600', marginBottom: 15, color: '#333'},
+  header: {
+    padding: 20,
+    backgroundColor: COLORS.background,
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 24,
+    color: '#fff',
+  },
 });
 
 export default Category;

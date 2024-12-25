@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
   },
+
   header: {
     padding: 20,
     backgroundColor: COLORS.background,

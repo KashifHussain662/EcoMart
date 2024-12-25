@@ -18,11 +18,22 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
   const [expandedCategoryId, setExpandedCategoryId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentSubcategory, setCurrentSubcategory] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
+
   const [editedSubcategory, setEditedSubcategory] = useState({
     name: '',
     type: '',
     price: '',
   });
+
+  const [newSubcategory, setNewSubcategory] = useState({
+    name: '',
+    type: '',
+    price: '',
+  });
+
+  const [isAddSubcategoryModalVisible, setIsAddSubcategoryModalVisible] =
+    useState(false);
 
   const toggleCategory = categoryId => {
     setExpandedCategoryId(
@@ -70,6 +81,7 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
                   type: 'success',
                 });
                 fetchCategories();
+                setIsAddSubcategoryModalVisible(false); // Close the modal if it was opened
               } else {
                 showToast({
                   message: data.message || 'Failed to delete subcategory',
@@ -177,6 +189,86 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
     }
   };
 
+  // console.log(currentCategory);
+  // const handleAddSubcategory = (categoryId, categoryName) => {
+  //   Alert.alert(
+  //     'Add Subcategory',
+  //     `Category ID: ${categoryId}\nCategory Name: ${categoryName}`,
+  //     [{text: 'OK'}],
+  //   );
+  // };
+
+  const handleAddNewSubcategory = async () => {
+    // Validation for required fields
+    if (!newSubcategory.name || !newSubcategory.type || !newSubcategory.price) {
+      showToast({
+        message: 'All fields are required!',
+        type: 'error',
+      });
+      return;
+    }
+
+    try {
+      // API call to add subcategory
+      const response = await fetch(API_URLS.ADD_SUBCATEGORY, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          category_id: currentCategory.id,
+          subcategories: [
+            {
+              name: newSubcategory.name,
+              type: newSubcategory.type,
+              price: newSubcategory.price,
+            },
+          ],
+        }),
+      });
+
+      // Parse the response as text first to handle potential issues
+      const responseText = await response.text();
+      console.log('Raw server response:', responseText);
+
+      // Attempt to parse the response as JSON
+      const data = JSON.parse(responseText);
+      console.log('Parsed response data:', data);
+
+      // Handle server response
+      if (data.status === 'success') {
+        showToast({
+          message: 'Subcategory added successfully!',
+          type: 'success',
+        });
+
+        // Reset the form
+        setNewSubcategory({
+          name: '',
+          type: '',
+          price: '',
+        });
+
+        // Close the modal
+        setIsAddSubcategoryModalVisible(false);
+
+        // Refresh categories
+        fetchCategories();
+      } else {
+        showToast({
+          message: data.message || 'Failed to add subcategory.',
+          type: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Error during API call:', error);
+      showToast({
+        message: 'An error occurred while adding the subcategory.',
+        type: 'error',
+      });
+    }
+  };
+
   return (
     <>
       <FlatList
@@ -214,8 +306,7 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
             </TouchableOpacity>
 
             {expandedCategoryId === item.id &&
-              item.subcategories &&
-              item.subcategories.length > 0 && (
+              item.subcategories?.length > 0 && (
                 <View style={styles.tableContainer}>
                   <View style={styles.tableHeader}>
                     <Text style={styles.tableHeaderText}>Subcategory</Text>
@@ -223,6 +314,7 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
                     <Text style={styles.tableHeaderText}>Price</Text>
                     <Text style={styles.tableHeaderText}>Actions</Text>
                   </View>
+
                   {item.subcategories.map((sub, idx) => (
                     <View key={idx} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{sub.name}</Text>
@@ -234,6 +326,7 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
                           onPress={() => handleEditSubcategory(sub)}>
                           <Icon name="edit" size={24} color="#4CAF50" />
                         </TouchableOpacity>
+
                         <TouchableOpacity
                           style={styles.iconButton}
                           onPress={() => handleDeleteSubcategory(sub)}>
@@ -242,6 +335,18 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
                       </View>
                     </View>
                   ))}
+
+                  {/* Add Subcategory Button */}
+                  <TouchableOpacity
+                    style={styles.addSubcategoryButton}
+                    onPress={() => {
+                      setCurrentCategory(item); // Set current category before opening the modal
+                      setIsAddSubcategoryModalVisible(true); // Show the add subcategory modal
+                    }}>
+                    <Text style={styles.addSubcategoryButtonText}>
+                      + Add Subcategory
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               )}
           </View>
@@ -290,6 +395,53 @@ const CategoryList1 = ({categoriesData, fetchCategories}) => {
 
               {/* <Button title="Save Changes" onPress={handleSaveChanges}  />
               <Button title="Cancel" onPress={() => setIsModalVisible(false)} /> */}
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isAddSubcategoryModalVisible}
+        animationType="slide"
+        transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Subcategory</Text>
+
+            <CustomTextInput
+              placeholder="Subcategory Name"
+              value={newSubcategory.name}
+              onChangeText={text =>
+                setNewSubcategory({...newSubcategory, name: text})
+              }
+            />
+            <CustomTextInput
+              placeholder="Type"
+              value={newSubcategory.type}
+              onChangeText={text =>
+                setNewSubcategory({...newSubcategory, type: text})
+              }
+            />
+            <CustomTextInput
+              placeholder="Price"
+              value={newSubcategory.price}
+              onChangeText={text =>
+                setNewSubcategory({...newSubcategory, price: text})
+              }
+            />
+
+            <View style={styles.modalButtons}>
+              <CustomButton
+                label="Save"
+                onPress={handleAddNewSubcategory} // Now this will use the currentCategory
+                style={{backgroundColor: 'green'}}
+              />
+
+              <CustomButton
+                label="Cancel"
+                onPress={() => setIsAddSubcategoryModalVisible(false)}
+                style={{backgroundColor: 'red'}}
+              />
             </View>
           </View>
         </View>
@@ -393,6 +545,17 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  addSubcategoryButton: {
+    padding: 10,
+    backgroundColor: '#4CAF50',
+    alignItems: 'center',
+    marginTop: 10,
+    borderRadius: 5,
+  },
+  addSubcategoryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
